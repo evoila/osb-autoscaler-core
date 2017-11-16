@@ -1,0 +1,9 @@
+instances: 1
+timeout: 180
+memory: 2048M
+domain: example.domain
+applications:
+- name: autoscaler 
+  host: autoscaler
+  path: target/core-X.X.jar
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
