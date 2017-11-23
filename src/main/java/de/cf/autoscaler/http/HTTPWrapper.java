@@ -42,15 +42,15 @@ public class HTTPWrapper {
 			myEndpoint += "/";
 		
 		if (port == 8080) {
-			response = Unirest.patch(
-					"http://"+host+"/"+myEndpoint+resourceId+"/"+newInstances)
+			response = Unirest.post(
+					"http://"+host+"/"+myEndpoint+resourceId)
 					.header("secret", secret)
 					.header("Content-Type", "application/json")
 					.body(scalingOrder.getJSON())
 					.asString();
 		} else {
-			response = Unirest.patch(
-					"http://"+host+":"+port+"/"+myEndpoint+resourceId+"/"+newInstances)
+			response = Unirest.post(
+					"http://"+host+":"+port+"/"+myEndpoint+resourceId)
 					.header("secret", secret)
 					.header("Content-Type", "application/json")
 					.body(scalingOrder.getJSON())
