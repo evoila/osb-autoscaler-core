@@ -76,6 +76,11 @@ public class ScalingAction {
 					log.info("Downscaled app "+app.getIdentifierStringForLogs()+": Statuscode "
 							+response.getStatus()+ ", reason: " + getReasonDescription());
 				
+				if (response.getStatus() >= 400 && response.getStatus() < 600) {
+					log.error("Scaling request returned with " + response.getStatus() + " " + response.getStatusText()
+							+ " - " + response.getBody());
+				}
+				
 				producer.produceScalingLog(this, scalingTime);
 			} catch (com.mashape.unirest.http.exceptions.UnirestException e) {
 				log.error("Connection error to the scaling engine: " + e.getMessage());
