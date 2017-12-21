@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -51,7 +50,7 @@ public class KafkaTest {
 		producer = new MetricProducer("autoscaler_test_metricProducer", host, PORT);
 	}
 	
-	@Test
+	//@Test
 	public void testContainerMetric() throws InvalidProtocolBufferException {
 		AutoScalerConsumer consumer = new KafkaTestConsumer(TOPIC_CONTAINER, host, PORT, this);
 		consumer.startConsumer();
@@ -80,7 +79,7 @@ public class KafkaTest {
 		consumer.stopConsumer();
 	}
 	
-	@Test
+	//@Test
 	public void testHTTPMetric() throws InvalidProtocolBufferException {
 		AutoScalerConsumer consumer = new KafkaTestConsumer(TOPIC_HTTP, host, PORT, this);
 		consumer.startConsumer();
