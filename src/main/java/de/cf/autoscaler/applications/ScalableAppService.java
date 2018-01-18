@@ -81,7 +81,7 @@ public class ScalableAppService {
 	public static boolean isValid(AppBlueprint bp) throws LimitException, InvalidPolicyException,
 								SpecialCharacterException, TimeException, InvalidWorkingSetException {
 		
-		return  (bp == null || bp.getBinding() == null) 
+		return  !(bp == null || bp.getBinding() == null) 
 				&&
 				areValidBindingInformation(bp.getBinding())
 				&&
