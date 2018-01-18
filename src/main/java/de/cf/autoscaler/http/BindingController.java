@@ -28,7 +28,8 @@ import de.cf.autoscaler.manager.ScalableAppManager;
  *
  */
 @Controller
-public class BindingController {
+public class BindingController extends BaseController {
+	
 	
 	/**
 	 * {@code ScalableAppManager} to get, bind or unbind applications.
@@ -54,7 +55,7 @@ public class BindingController {
 		
 		if (secret.equals(this.secret)) {
 			if (binding.isValidWithReason() != null) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\" : \"" + binding.isValidWithReason() + "\"}");
+				return processErrorResponse(binding.isValidWithReason(), HttpStatus.BAD_REQUEST);
 			}
 				
 			ScalableApp newApp = appManager.getNewApp(binding);

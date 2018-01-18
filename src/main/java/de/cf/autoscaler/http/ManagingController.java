@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import de.cf.autoscaler.api.update.UpdateRequest;
 import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.applications.ScalableAppService;
+import de.cf.autoscaler.exception.ErrorMessage;
 import de.cf.autoscaler.exception.InvalidPolicyException;
 import de.cf.autoscaler.exception.InvalidWorkingSetException;
 import de.cf.autoscaler.exception.LimitException;
@@ -31,7 +33,7 @@ import de.cf.autoscaler.manager.ScalableAppManager;
  * @see ScalableApp
  */
 @Controller
-public class ManagingController {
+public class ManagingController extends BaseController{
 
 	/**
 	 * Logger of this class.
@@ -56,12 +58,17 @@ public class ManagingController {
 	 * @param appId ID of the application
 	 * @param requestBody body of the request
 	 * @return the response in form of a {@code ResponseEntity}
+	 * @throws InvalidWorkingSetException 
+	 * @throws TimeException 
+	 * @throws SpecialCharacterException 
+	 * @throws InvalidPolicyException 
+	 * @throws LimitException 
 	 * @see ResponseEntity
 	 */
 	@RequestMapping(value = "/bindings/{appId}", method = RequestMethod.PATCH
 			, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateApp(@RequestHeader(value="secret") String secret, @PathVariable("appId") String appId,
-			@RequestBody UpdateRequest requestBody) {
+			@RequestBody UpdateRequest requestBody) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException {
 		
 		if (secret.equals(this.secret)) {
 			ScalableApp app = appManager.get(appId);
@@ -81,16 +88,12 @@ public class ManagingController {
 				app.update(requestBody);
 				appManager.updateInDatabase(app);
 				responseApp = ScalableAppService.getSerializationObjectWithoutLock(app);
-			} catch (LimitException | InvalidPolicyException | SpecialCharacterException | TimeException |
-					InvalidWorkingSetException ex) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{ \"error\" : \""+ex.getMessage()+"\"}");
 			} catch (InterruptedException ex) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{ \"error\" : \"Request was interrupted.\" }");
 			}
 			
 			app.release();
 			return new ResponseEntity<ResponseApplication>(responseApp, HttpStatus.OK);
-			
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{}");	
 	}
@@ -172,5 +175,17 @@ public class ManagingController {
 			return ResponseEntity.status(HttpStatus.GONE).body("{}");
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{}");
+	}
+	
+	@ExceptionHandler({LimitException.class, InvalidPolicyException.class, SpecialCharacterException.class, TimeException.class, InvalidWorkingSetException.class})
+	public ResponseEntity<ErrorMessage> handleInputException(Exception ex) {
+		log.warn(ex.getClass().getSimpleName(), ex);
+		return processErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(InterruptedException.class)
+	public ResponseEntity<ErrorMessage> handleException(InterruptedException ex) {
+		log.warn("Acquiring a mutex was interrupted.",ex);
+		return processErrorResponse(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
