@@ -327,7 +327,8 @@ public class ScalableApp {
 
 	public void setScalingIntervalMultiplier(int scalingIntervalMultiplier) {
 		this.scalingIntervalMultiplier = scalingIntervalMultiplier;
-		currentIntervalState = 0;
+		if (currentIntervalState >= scalingIntervalMultiplier)
+			currentIntervalState = scalingIntervalMultiplier - 1;
 	}
 	
 	public int getMinInstances() {

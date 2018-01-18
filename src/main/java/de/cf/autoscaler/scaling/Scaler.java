@@ -164,13 +164,13 @@ public class Scaler {
 				log.info("Scaling needed for " + app.getIdentifierStringForLogs() + ": " + action.getReasonDescription());
 				action.executeAction(engineProperties, producer);
 			} else if (app.isLearningEnabled()){
-				// no scaling ? => set Request Per Instance
+				// no scaling ? => set Requests Per Instance
 				log.info("No scaling needed for " + app.getIdentifierStringForLogs() + ".");
 				app.getRequest().setRequestsPerInstance();
 				
 			}
 		} else {
-			log.info("No information for " + app.getIdentifierStringForLogs() + ".");
+			log.info("No final scaling action found for " + app.getIdentifierStringForLogs() + ", this may be caused by not enabling scaling for any metric.");
 		}
 		app.resetApplicationMetricLists();
 		appManager.updateInDatabase(app);

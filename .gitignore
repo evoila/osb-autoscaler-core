@@ -14,3 +14,5 @@ buildNumber.properties
 doc/
 src/main/resources/application.properties
 manifest.yml
+.idea/
+core.iml
