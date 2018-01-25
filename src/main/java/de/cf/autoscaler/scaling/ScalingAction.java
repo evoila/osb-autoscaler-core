@@ -2,8 +2,8 @@ package de.cf.autoscaler.scaling;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.mashape.unirest.http.HttpResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
 
 import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.http.HTTPWrapper;
@@ -60,33 +60,33 @@ public class ScalingAction {
 			long scalingTime = System.currentTimeMillis();
 			app.setLastScalingTime(scalingTime);
 			try {
-				HttpResponse<String> response 
-					= HTTPWrapper.scale(engineProperties.getHost()
-							, engineProperties.getPort()
-							, engineProperties.getScalingEndpoint()
-							, app.getBinding().getResourceId()
-							, app.getBinding().getContext()
-							, newInstances
-							, engineProperties.getSecret());
-
+				ResponseEntity<String> response = HTTPWrapper.scale(engineProperties.getHost()
+						, engineProperties.getPort()
+						, engineProperties.getScalingEndpoint()
+						, app.getBinding().getResourceId()
+						, app.getBinding().getContext()
+						, newInstances
+						, engineProperties.getSecret());
+				
 				if (newInstances > oldInstances)
 					log.info("Upscaled app "+app.getIdentifierStringForLogs() + ": Statuscode "
-							+response.getStatus()+ ", reason: " + getReasonDescription());
+							+response.getStatusCodeValue() + ", reason: " + getReasonDescription());
 				if (newInstances < oldInstances)
 					log.info("Downscaled app "+app.getIdentifierStringForLogs()+": Statuscode "
-							+response.getStatus()+ ", reason: " + getReasonDescription());
+							+response.getStatusCodeValue() + ", reason: " + getReasonDescription());
 				
-				if (response.getStatus() >= 400 && response.getStatus() < 600) {
-					log.error("Scaling request returned with " + response.getStatus() + " " + response.getStatusText()
+				if (response.getStatusCodeValue() >= 400 && response.getStatusCodeValue() < 600) {
+					log.error("Scaling request returned with " + response.getStatusCodeValue() + " " + response.getStatusCode().name()
 							+ " - " + response.getBody());
 				}
 				
 				producer.produceScalingLog(this, scalingTime);
-			} catch (com.mashape.unirest.http.exceptions.UnirestException e) {
-				log.error("Connection error to the scaling engine: " + e.getMessage());
+			} catch (HttpServerErrorException ex) {
+				log.error("Scaling request threw HttpServerErrorException with " + ex.getRawStatusCode() + " " + ex.getStatusText()
+						+ " - " + ex.getResponseBodyAsString());
 			}
 		} else if (!isValid()) {
-			log.info("A ScalingAction for " + app.getIdentifierStringForLogs() + " is not valid.");
+			log.error("A ScalingAction for " + app.getIdentifierStringForLogs() + " is not valid.");
 		}
 	}
 	

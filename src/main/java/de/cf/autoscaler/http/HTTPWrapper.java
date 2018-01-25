@@ -1,8 +1,12 @@
 package de.cf.autoscaler.http;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import de.cf.autoscaler.api.ScalingRequest;
 import de.cf.autoscaler.api.binding.BindingContext;
@@ -14,8 +18,12 @@ import de.cf.autoscaler.api.binding.BindingContext;
  */
 public class HTTPWrapper {
 	
+	private static final Logger log = LoggerFactory.getLogger(HTTPWrapper.class);
+	
+	private static RestTemplate restTemplate = new RestTemplate();
+	
 	/**
-	 * Hide constructor because there is no need for instance of this class.
+	 * Hide constructor because there is no need for an instance of this class.
 	 */
 	private HTTPWrapper() {}
 	
@@ -32,30 +40,17 @@ public class HTTPWrapper {
 	 * @throws UnirestException - if Unirest throws an exception itself
 	 * @see HttpResponse
 	 */
-	public static HttpResponse<String> scale(String host, int port, String endpoint
-			, String resourceId, BindingContext context, int newInstances, String secret) throws UnirestException {
+	public static ResponseEntity<String> scale(String host, int port, String endpoint
+			, String resourceId, BindingContext context, int newInstances, String secret) throws HttpServerErrorException {
 		
-		HttpResponse<String> response;
-		String myEndpoint = endpoint;
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("secret", secret);
+		headers.add("Content-Type", "application/json");
+		HttpEntity<?> request = new HttpEntity<>(null, headers);
+		String url = "http://"+host+":"+port+"/"+endpoint+"/"+resourceId;
 		ScalingRequest scalingOrder = new ScalingRequest(newInstances, context);
-		if (!endpoint.isEmpty())
-			myEndpoint += "/";
+		log.debug("Sending scaling request to " + url + " - " + scalingOrder.toString());
 		
-		if (port == 8080) {
-			response = Unirest.post(
-					"http://"+host+"/"+myEndpoint+resourceId)
-					.header("secret", secret)
-					.header("Content-Type", "application/json")
-					.body(scalingOrder.getJSON())
-					.asString();
-		} else {
-			response = Unirest.post(
-					"http://"+host+":"+port+"/"+myEndpoint+resourceId)
-					.header("secret", secret)
-					.header("Content-Type", "application/json")
-					.body(scalingOrder.getJSON())
-					.asString();
-		}
-		return response;
+		return restTemplate.postForEntity(url, request, String.class);
 	}
 }
