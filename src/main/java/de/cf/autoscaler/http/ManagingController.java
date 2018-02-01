@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import de.cf.autoscaler.api.binding.InvalidBindingException;
 import de.cf.autoscaler.api.update.UpdateRequest;
 import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.applications.ScalableAppService;
@@ -63,12 +64,13 @@ public class ManagingController extends BaseController{
 	 * @throws SpecialCharacterException 
 	 * @throws InvalidPolicyException 
 	 * @throws LimitException 
+	 * @throws InvalidBindingException 
 	 * @see ResponseEntity
 	 */
 	@RequestMapping(value = "/bindings/{appId}", method = RequestMethod.PATCH
 			, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateApp(@RequestHeader(value="secret") String secret, @PathVariable("appId") String appId,
-			@RequestBody UpdateRequest requestBody) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException {
+			@RequestBody UpdateRequest requestBody) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException, InvalidBindingException {
 		
 		if (secret.equals(this.secret)) {
 			ScalableApp app = appManager.get(appId);
@@ -177,7 +179,7 @@ public class ManagingController extends BaseController{
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{}");
 	}
 	
-	@ExceptionHandler({LimitException.class, InvalidPolicyException.class, SpecialCharacterException.class, TimeException.class, InvalidWorkingSetException.class})
+	@ExceptionHandler({LimitException.class, InvalidPolicyException.class, SpecialCharacterException.class, TimeException.class, InvalidWorkingSetException.class, InvalidBindingException.class})
 	public ResponseEntity<ErrorMessage> handleInputException(Exception ex) {
 		log.warn(ex.getClass().getSimpleName(), ex);
 		return processErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);

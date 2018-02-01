@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.cf.autoscaler.api.binding.Binding;
+import de.cf.autoscaler.api.binding.InvalidBindingException;
 import de.cf.autoscaler.applications.AppBlueprint;
 import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.applications.ScalableAppService;
@@ -100,17 +101,20 @@ public class ScalableAppManager {
 		
 		for (int i = 0; i < appsFromDb.size(); i++) {		
 			AppBlueprint bp = appsFromDb.get(i);
-			
+		
 			try {
-				ScalableAppService.isValid(bp);
-				ScalableApp app = new ScalableApp(bp, kafkaProperties, autoscalerProperties, protobufProducer);
-				if (!contains(app)) {
-					add(app,true);
-					log.info("Imported app from database: "+app.getIdentifierStringForLogs());
+				if (ScalableAppService.isValid(bp)) {
+					ScalableApp app = new ScalableApp(bp, kafkaProperties, autoscalerProperties, protobufProducer);
+					if (!contains(app)) {
+						add(app,true);
+						log.info("Imported app from database: "+app.getIdentifierStringForLogs());
+					} else {
+						log.debug("Found an already existing binding with the same ID while trying to import " + bp.getBinding().getIdentifierStringForLogs());
+					}
 				} else {
-					log.debug("Found an already existing binding with the same ID while trying to import " + bp.getBinding().getIdentifierStringForLogs());
+					log.error("Found an invalid AppBlueprint while trying to synch with the database: " + bp.getBinding().getIdentifierStringForLogs() + " : could not determine the cause.");
 				}
-			} catch (LimitException | InvalidPolicyException | SpecialCharacterException | TimeException | InvalidWorkingSetException ex) {
+			} catch (LimitException | InvalidPolicyException | SpecialCharacterException | TimeException | InvalidWorkingSetException | InvalidBindingException ex) {
 				log.error("Found an invalid AppBlueprint while trying to synch with the database: "
 							+bp.getBinding().getIdentifierStringForLogs()+" : "+ex.getMessage());
 			}

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.cf.autoscaler.api.binding.Binding;
+import de.cf.autoscaler.api.binding.InvalidBindingException;
 import de.cf.autoscaler.exception.InvalidPolicyException;
 import de.cf.autoscaler.exception.InvalidWorkingSetException;
 import de.cf.autoscaler.exception.LimitException;
@@ -77,13 +78,14 @@ public class ScalableAppService {
 	 * @throws SpecialCharacterException for invalid names and IDs
 	 * @throws TimeException for invalid time stamps and number concerning time.
 	 * @throws InvalidWorkingSetException for invalid working sets
+	 * @throws InvalidBindingException 
 	 */
 	public static boolean isValid(AppBlueprint bp) throws LimitException, InvalidPolicyException,
-								SpecialCharacterException, TimeException, InvalidWorkingSetException {
+								SpecialCharacterException, TimeException, InvalidWorkingSetException, InvalidBindingException {
 		
-		return  !(bp == null || bp.getBinding() == null) 
+		return  (bp != null && bp.getBinding() != null) 
 				&&
-				areValidBindingInformation(bp.getBinding())
+				isValidBinding(bp.getBinding())
 				&&
 				areValidPolicies(bp.getRequestThresholdPolicy(), 
 								bp.getCpuThresholdPolicy(), 
@@ -140,15 +142,25 @@ public class ScalableAppService {
 	 * @return true if the names are valid
 	 * @throws SpecialCharacterException if an special character was found
 	 */
+	// use the isValid method from BindingContext to check the ids
+	@Deprecated
 	private static boolean areValidBindingInformation(Binding binding) throws SpecialCharacterException {
 		if (!binding.getResourceId().matches("\\w*")) {
 			for (int i = 0; i < binding.getResourceId().length(); i++) {
 				if (String.valueOf(binding.getResourceId().charAt(i)).matches("\\W*") && binding.getResourceId().charAt(i)!= '-' ) {
-					throw new SpecialCharacterException("AppId contains special characters.");
+					throw new SpecialCharacterException("resourceId contains special characters.");
 				}
 			}
 		}	
 		
+		return true;
+	}
+	
+	private static boolean isValidBinding(Binding binding) throws InvalidBindingException {
+		String reason = binding.isValidWithReason();
+		if (reason != null) {
+			throw new InvalidBindingException(reason);
+		}
 		return true;
 	}
 	

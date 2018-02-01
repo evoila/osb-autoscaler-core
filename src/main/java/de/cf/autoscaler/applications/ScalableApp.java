@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.cf.autoscaler.api.binding.Binding;
+import de.cf.autoscaler.api.binding.InvalidBindingException;
 import de.cf.autoscaler.api.update.UpdateRequest;
 import de.cf.autoscaler.exception.InvalidPolicyException;
 import de.cf.autoscaler.exception.InvalidWorkingSetException;
@@ -456,8 +457,9 @@ public class ScalableApp {
 	 * @throws SpecialCharacterException for invalid names and IDs
 	 * @throws TimeException for invalid time stamps and number concerning time.
 	 * @throws InvalidWorkingSetException for an invalid working set
+	 * @throws InvalidBindingException for an invalid binding
 	 */
-	public String update(UpdateRequest updateRequest) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException {
+	public String update(UpdateRequest updateRequest) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException, InvalidBindingException {
 		AppBlueprint bp = this.getCopyOfBlueprint();
 		Set<Integer> set = updateRequest.getAllSetElements();
 		
