@@ -1,6 +1,7 @@
 package de.cf.autoscaler.http;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,6 +104,31 @@ public class BindingController extends BaseController {
 	public ResponseEntity<?> infosAboutBindings(@RequestHeader(value="secret") String secret) {
 		if (secret.equals(this.secret)) {
 			List<Binding> bindings = appManager.getListOfBindings();
+			Map<String, List<Binding>> map = new HashMap<String, List<Binding>>();
+			map.put("bindings", bindings);
+			return new ResponseEntity<Map<String, List<Binding>>>(map, HttpStatus.OK);
+		}
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{}");
+	}
+
+	/**
+	 * Handles incoming request to get information about service instance specific existing bindings.
+	 * @param secret {@code String} to authorize with
+	 * @param serviceId {@code String} of the service instance you want to get the bindings of
+	 * @return the response in form of a {@code ResponseEntity}
+	 */
+	@RequestMapping(value = "/bindings/{serviceId}", method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> infosAboutSpecificBindings(@RequestHeader(value="secret") String secret,
+														@PathVariable("serviceId") String serviceId) {
+		if (secret.equals(this.secret)) {
+			List<Binding> bindings = new LinkedList<>();
+
+			for(Binding binding : appManager.getListOfBindings()) {
+				if(binding.getServiceId().equals(serviceId)) {
+					bindings.add(binding);
+				}
+			}
+
 			Map<String, List<Binding>> map = new HashMap<String, List<Binding>>();
 			map.put("bindings", bindings);
 			return new ResponseEntity<Map<String, List<Binding>>>(map, HttpStatus.OK);
