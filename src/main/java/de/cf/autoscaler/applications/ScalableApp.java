@@ -227,7 +227,8 @@ public class ScalableApp {
 			, AutoscalerPropertiesBean autoscalerProps, ProtobufProducer producer) {
 		
 		this.binding = new Binding(binding);
-		this.binding.setCreationTime(System.currentTimeMillis());
+		if (this.binding.getCreationTime() == 0)
+			this.binding.setCreationTime(System.currentTimeMillis());
 		
 		cpu = new CpuWrapper("", -1, -1, false, this);
 		ram = new RamWrapper("", -1, -1, false, this);
@@ -235,8 +236,8 @@ public class ScalableApp {
 		latency = new LatencyWrapper(-1, -1 , "", false, this);
 		
 		currentIntervalState = 0;
-		lastScalingTime = binding.getCreationTime();
-		learningStartTime = binding.getCreationTime();
+		lastScalingTime = this.binding.getCreationTime();
+		learningStartTime = this.binding.getCreationTime();
 		
 		maxMetricAge = autoscalerProps.getMaxMetricAge();
 		maxListSize = autoscalerProps.getMaxMetricListSize();
