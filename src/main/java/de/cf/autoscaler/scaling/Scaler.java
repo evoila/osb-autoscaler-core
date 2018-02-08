@@ -101,19 +101,25 @@ public class Scaler {
 					currentApp = l.get(i);
 					currentApp.acquire();
 					log.debug("--- Application " + currentApp.getIdentifierStringForLogs() + " --- ");
-					ScalableAppService.aggregateInstanceMetrics(currentApp, producer);
-					if (currentApp.isInCooldown()) {
-						log.info("Application "+ currentApp.getIdentifierStringForLogs() + " is still waiting for cooldown.");
-						currentApp.resetApplicationMetricLists();
-					} else if (currentApp.isScalingEnabled() && currentApp.timeToCheck()) {
-						log.info("Time to check for "+ currentApp.getIdentifierStringForLogs());
-						checkScaling(currentApp);
-					} else {
-						if (!currentApp.isScalingEnabled())
-							log.debug("No scaling enabled for " + currentApp.getIdentifierStringForLogs());
-						else if (!currentApp.isTimeToCheckScaling())	
+					if (currentApp.isScalingEnabled()) {
+						ScalableAppService.aggregateInstanceMetrics(currentApp, producer);
+						boolean timeToCheck = currentApp.timeToCheck();
+						if (currentApp.isInCooldown()) {
+							log.info("Application "+ currentApp.getIdentifierStringForLogs() + " is still waiting for cooldown.");
+							currentApp.resetApplicationMetricLists();
+						} else if (timeToCheck) {
+							log.info("Time to check for "+ currentApp.getIdentifierStringForLogs());
+							checkScaling(currentApp);
+						} else {
 							log.debug("Not yet time for " + currentApp.getIdentifierStringForLogs());
+						}
+					} else {
+						log.debug("InstanceMetrics: count=" + currentApp.getCopyOfInstanceContainerMetricsList().size() + " - " + currentApp.getCopyOfInstanceContainerMetricsList());
+						log.debug("No scaling enabled for " + currentApp.getIdentifierStringForLogs());
+						currentApp.resetContainerMetricsList();
+						currentApp.resetHttpMetricList();
 					}
+
 					currentApp.release();
 				}
 			}
