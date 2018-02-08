@@ -117,7 +117,7 @@ public class BindingController extends BaseController {
 	 * @param serviceId {@code String} of the service instance you want to get the bindings of
 	 * @return the response in form of a {@code ResponseEntity}
 	 */
-	@RequestMapping(value = "/bindings/{serviceId}", method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/bindings/serviceInstance/{serviceId}", method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> infosAboutSpecificBindings(@RequestHeader(value="secret") String secret,
 														@PathVariable("serviceId") String serviceId) {
 		if (secret.equals(this.secret)) {
