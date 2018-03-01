@@ -21,7 +21,7 @@ import de.cf.autoscaler.kafka.messages.HttpMetric;
 import de.cf.autoscaler.kafka.messages.ScalingLog;
 import de.cf.autoscaler.kafka.protobuf.ProtobufApplicationMetricWrapper.ProtoApplicationMetric;
 import de.cf.autoscaler.kafka.protobuf.ProtobufContainerMetricWrapper.ProtoContainerMetric;
-import de.cf.autoscaler.kafka.protobuf.ProtobufScalingWrapper.ProtoScaling;
+import de.cf.autoscaler.kafka.protobuf.ProtobufScalingLogWrapper.ProtoScalingLog;
 import de.cf.autoscaler.scaling.ScalingAction;
 
 /**
@@ -101,9 +101,10 @@ public class ProtobufProducer {
 	public void produceScalingLog(ScalingAction sc, long timestamp) {
 		ScalableApp app = sc.getApp();
 		
-		ProtoScaling scalingProto = ProtoScaling.newBuilder()
+		ProtoScalingLog scalingLogProto = ProtoScalingLog.newBuilder()
 				.setTimestamp(timestamp)
-				.setAppId(app.getBinding().getId())
+				.setAppId(app.getBinding().getResourceId())
+				.setResourceName(app.getBinding().getResourceName())
 				.setComponent(sc.getReason())
 				.setOldInstances(sc.getOldInstances())
 				.setNewInstances(sc.getNewInstances())
@@ -123,10 +124,10 @@ public class ProtobufProducer {
 				.setDescription(sc.getReasonDescription())
 				.build();
 		
-		ScalingLog scalingLog = new ScalingLog(scalingProto);
+		ScalingLog scalingLog = new ScalingLog(scalingLogProto);
 		log.debug("ScalingLog: " + scalingLog.toString());
 		
-		byte[] output = scalingProto.toByteArray();
+		byte[] output = scalingLogProto.toByteArray();
 		
         ProducerRecord<String, byte[]> rec = new ProducerRecord<String, byte[]>(scalingTopic, output);
         producer.send(rec);

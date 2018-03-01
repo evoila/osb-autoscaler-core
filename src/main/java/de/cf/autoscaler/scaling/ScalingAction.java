@@ -9,7 +9,6 @@ import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.http.HTTPWrapper;
 import de.cf.autoscaler.kafka.messages.ScalingLog;
 import de.cf.autoscaler.kafka.producer.ProtobufProducer;
-import de.cf.autoscaler.properties.ScalingEnginePropertiesBean;
 
 /**
  * Defines and manages a scaling order.
