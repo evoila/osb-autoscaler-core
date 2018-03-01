@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.cf.autoscaler.api.binding.Binding;
+import de.cf.autoscaler.api.binding.BindingContext;
 import de.cf.autoscaler.api.binding.InvalidBindingException;
 import de.cf.autoscaler.exception.InvalidPolicyException;
 import de.cf.autoscaler.exception.InvalidWorkingSetException;
@@ -267,7 +268,8 @@ public class ScalableAppService {
 		
 		List<ContainerMetric> containerMetrics = app.getCopyOfInstanceContainerMetricsList();
 		List<HttpMetric> httpMetrics = app.getCopyOfHttpMetricsList();
-		log.debug("InstanceMetrics: "+ containerMetrics);
+		log.debug("InstanceMetrics: count=" + containerMetrics.size() + " - " + containerMetrics);
+		
 		log.debug("Aggregating Instance Metrics for " + app.getIdentifierStringForLogs());
 		
 		if (containerMetrics.size() == 0) 
@@ -348,5 +350,10 @@ public class ScalableAppService {
 			log.debug("New ApplicationMetric: " + appMetric);
 			log.debug("ApplicationMetrics: "+ app.getCopyOfApplicationMetricsList());
 		}
+	}
+	
+	public static String getNameForScalableApp(Binding binding) {
+		log.error("Not supported yet.");
+		return "";
 	}
 }

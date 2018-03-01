@@ -179,6 +179,38 @@ public class ManagingController extends BaseController{
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{}");
 	}
 	
+	/**
+	 * Handles incoming requests to update the name of a resource by requesting it from the scaling engine.
+	 * @param secret secret {@code String} to authorize with
+	 * @param resourceId ID of the resource
+	 * @return the response in form of a {@code ResponseEntity}
+	 */
+	public ResponseEntity<?> updateResourceName(@RequestHeader(value = "secret") String secret, @PathVariable("resourceId") String resourceId) {
+		if (secret.equals(this.secret)) {
+			ScalableApp app = appManager.get(resourceId);
+			if (app != null) {
+				ResponseApplication responseApp = null;
+				try {
+					app.acquire();
+					String resourceName = ScalableAppService.getNameForScalableApp(app.getBinding());
+					if (resourceName != null && !resourceName.isEmpty()) {
+						log.info("Updating resource name of " + app.getBinding().getIdentifierStringForLogs() + " to '" + resourceName + "'.");
+						app.getBinding().setResourceName(resourceName);
+					} else {
+						log.info("Could not update resource name of " + app.getBinding().getIdentifierStringForLogs() + ", because the retreived name is empty or null.");
+					}
+					responseApp = ScalableAppService.getSerializationObjectWithoutLock(app);
+				} catch (InterruptedException ex) {
+					return new ResponseEntity<String>("{ \"error\" : \"Request was interrupted.\" }",HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				app.release();
+				return new ResponseEntity<ResponseApplication>(responseApp, HttpStatus.OK);
+			}
+			return new ResponseEntity<String>("{}",HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<String>("{}",HttpStatus.UNAUTHORIZED);
+	}
+	
 	@ExceptionHandler({LimitException.class, InvalidPolicyException.class, SpecialCharacterException.class, TimeException.class, InvalidWorkingSetException.class, InvalidBindingException.class})
 	public ResponseEntity<ErrorMessage> handleInputException(Exception ex) {
 		log.warn(ex.getClass().getSimpleName(), ex);

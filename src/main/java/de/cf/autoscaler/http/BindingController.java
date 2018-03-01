@@ -22,6 +22,7 @@ import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.applications.ScalableAppService;
 import de.cf.autoscaler.http.response.ResponseApplication;
 import de.cf.autoscaler.manager.ScalableAppManager;
+import de.cf.autoscaler.properties.AutoscalerPropertiesBean;
 
 /**
  * Controller to handle incoming bindings and unbindings.
@@ -37,6 +38,9 @@ public class BindingController extends BaseController {
 	 */
 	@Autowired
 	private ScalableAppManager appManager;
+	
+	@Autowired
+	private AutoscalerPropertiesBean autoscalerProps;
 	
 	/**
 	 * {@code String} to check for equality with the secret of a request to authorize it.
@@ -67,6 +71,11 @@ public class BindingController extends BaseController {
 				return ResponseEntity.status(HttpStatus.CONFLICT).body(
 						"{ \"error\" : \"An other binding was found with the same id.\" }");
 			}
+			
+			if (autoscalerProps.isGetAppNameFromScalingEngineAtBinding()) {
+				newApp.getBinding().setResourceName(ScalableAppService.getNameForScalableApp(newApp.getBinding()));
+			}
+			
 			ResponseApplication responseApp = ScalableAppService.getSerializationObjectWithLock(newApp);
 			appManager.add(newApp, false);
 			return new ResponseEntity<ResponseApplication>(responseApp, HttpStatus.CREATED);

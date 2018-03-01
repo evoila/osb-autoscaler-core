@@ -25,6 +25,12 @@ public class AutoscalerPropertiesBean {
 	private long maxMetricAge;
 	
 	/**
+	 * Boolean value, whether to ask the scaling engine for the application name when creating a new binding.
+	 */
+	@Value("${scaler.appname.get_from_scaling_engine_at_binding}")
+	private boolean getAppNameFromScalingEngineAtBinding;
+	
+	/**
 	 * Constructor for Spring to inject the bean.
 	 */
 	public AutoscalerPropertiesBean() { }
@@ -41,7 +47,15 @@ public class AutoscalerPropertiesBean {
 		return maxMetricAge;
 	}
 
-	public void setMaxMetricAge(int maxMetricAge) {
+	public void setMaxMetricAge(long maxMetricAge) {
 		this.maxMetricAge = maxMetricAge;
+	}
+
+	public boolean isGetAppNameFromScalingEngineAtBinding() {
+		return getAppNameFromScalingEngineAtBinding;
+	}
+
+	public void setGetAppNameFromScalingEngineAtBinding(boolean getAppNameFromScalingEngineAtBinding) {
+		this.getAppNameFromScalingEngineAtBinding = getAppNameFromScalingEngineAtBinding;
 	}
 }
