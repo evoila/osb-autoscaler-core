@@ -310,3 +310,29 @@ Example body for 200:
 ```json
 See "create new binding" example body.
 ```
+
+## Update the resource name ##
+
+Requests the descriptive resource name the platform has for the resource behind the binding and updates the current value.
+
+### Request ###
+
+```PATCH /bindings/{bindingId}/updateName```
+
+Example body:
+```json
+No body needed.
+```
+
+### Response ###
+
+| Code | Description |
+| ----- | ----- |
+| 200 OK | successfully contacted the scaling engine and updated the name |
+| 401 UNAUTHORIZED | unauthorized request, might be caused by wrong secret string. |
+| 410 GONE | no binding found with the given id |
+
+Example body for 200:
+```json
+See "create new binding" example body.
+```

@@ -30,6 +30,7 @@ Remember to create a properties file [here](src/main/resources) with following v
 |  server.port| port of the API |
 |  scaler.maxMetricListSize| maximum count of metrics saved at once for a resource |
 | scaler.maxMetricAge | maximum for the age of a metric in milliseconds (should not be smaller than a scaling interval which is normaly 30s); metrics older than this value will be ignored and removed |
+|scaler.appname.get_from_scaling_engine_at_binding| boolean value, whether to request the resource name directly after creating a new binding (set this to 'false' for testing the autoscaler without a running scaling engine|
 
 **Service Broker Information**
 
@@ -120,6 +121,7 @@ Every call to the Core needs a secret header with the prearranged secret for aut
 | PATCH /bindings/{bindingId} | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/update/UpdateRequest.java) | update the policies of a binding |
 | PATCH /bindings/{bindingId}/resetQuotient | - | reset the quotient of a binding to its minimum quotient
 | PATCH /bindings/{bindingId}/resetLST | - | reset the learning start time and therefore enabling a new learning process, if learning is enabled |
+| PATCH /bindings/{bindingId}/updateName | - |request the descriptive name of the resource on the platform and updates the current value (only used for easy visual identification of bindings) |
 
 For example bodies and responses see [detailed API](detailedApi.md).
 
