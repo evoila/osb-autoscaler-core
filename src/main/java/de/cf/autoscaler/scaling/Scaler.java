@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.applications.ScalableAppService;
+import de.cf.autoscaler.http.HTTPWrapper;
 import de.cf.autoscaler.kafka.producer.ProtobufProducer;
 import de.cf.autoscaler.manager.ScalableAppManager;
-import de.cf.autoscaler.properties.ScalingEnginePropertiesBean;
 
 /**
  * Core class with the check scaling loop.
@@ -36,12 +36,6 @@ public class Scaler {
 	private Logger log = LoggerFactory.getLogger(Scaler.class);
 
 	/**
-	 * Bean for properties to communicate with the Scaling Engine.
-	 */
-	@Autowired
-	private ScalingEnginePropertiesBean engineProperties;
-	
-	/**
 	 * Manager for {@linkplain ScalableAppManager} to get applications from.
 	 */
 	@Autowired
@@ -52,6 +46,12 @@ public class Scaler {
 	 */
 	@Autowired
 	private ProtobufProducer producer; 
+	
+	/**
+	 * Wrapper for HTTP request.
+	 */
+	@Autowired
+	private HTTPWrapper httpWrapper;
 	
 	/**
 	 * Mutex to get the scaling checks triggered based on time by a {@linkplain TimerThread}
@@ -168,7 +168,7 @@ public class Scaler {
 		if (action != null) {
 			if (action.isNeedToScale() && action.getNewInstances() != action.getOldInstances()) {
 				log.info("Scaling needed for " + app.getIdentifierStringForLogs() + ": " + action.getReasonDescription());
-				action.executeAction(engineProperties, producer);
+				action.executeAction(httpWrapper, producer);
 			} else if (app.isLearningEnabled()){
 				// no scaling ? => set Requests Per Instance
 				log.info("No scaling needed for " + app.getIdentifierStringForLogs() + ".");

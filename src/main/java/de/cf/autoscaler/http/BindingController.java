@@ -42,6 +42,9 @@ public class BindingController extends BaseController {
 	@Autowired
 	private AutoscalerPropertiesBean autoscalerProps;
 	
+	@Autowired
+	private HTTPWrapper httpWrapper;
+	
 	/**
 	 * {@code String} to check for equality with the secret of a request to authorize it.
 	 */
@@ -73,7 +76,7 @@ public class BindingController extends BaseController {
 			}
 			
 			if (autoscalerProps.isGetAppNameFromScalingEngineAtBinding()) {
-				newApp.getBinding().setResourceName(ScalableAppService.getNameForScalableApp(newApp.getBinding()));
+				newApp.getBinding().setResourceName(ScalableAppService.getNameForScalableApp(newApp.getBinding(), httpWrapper));
 			}
 			
 			ResponseApplication responseApp = ScalableAppService.getSerializationObjectWithLock(newApp);

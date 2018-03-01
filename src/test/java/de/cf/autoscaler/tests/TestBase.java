@@ -63,7 +63,7 @@ public class TestBase {
 		AppBlueprint bp = new AppBlueprint();
 		
 		BindingContext context = new BindingContext("cloudfoundry", "default", "evoila");
-		Binding binding = new Binding("testBindingId","testId", "testScalerId", "testServiceId", 0, context);
+		Binding binding = new Binding("testBindingId","testId", "testName", "testScalerId", "testServiceId", 0, context);
 		bp.setBinding(binding);
 		
 		bp.setScalingEnabled(true);

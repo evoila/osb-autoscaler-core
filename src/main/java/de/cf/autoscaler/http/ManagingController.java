@@ -47,6 +47,9 @@ public class ManagingController extends BaseController{
 	@Autowired
 	private ScalableAppManager appManager;
 	
+	@Autowired
+	private HTTPWrapper httpWrapper;
+	
 	/**
 	 * {@code String} to check for equality with the secret of a request to authorize it.
 	 */
@@ -185,14 +188,15 @@ public class ManagingController extends BaseController{
 	 * @param resourceId ID of the resource
 	 * @return the response in form of a {@code ResponseEntity}
 	 */
-	public ResponseEntity<?> updateResourceName(@RequestHeader(value = "secret") String secret, @PathVariable("resourceId") String resourceId) {
+	@RequestMapping(value  = "/bindings/{bindingId}/updateName", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateResourceName(@RequestHeader(value = "secret") String secret, @PathVariable("bindingId") String bindingId) {
 		if (secret.equals(this.secret)) {
-			ScalableApp app = appManager.get(resourceId);
+			ScalableApp app = appManager.get(bindingId);
 			if (app != null) {
 				ResponseApplication responseApp = null;
 				try {
 					app.acquire();
-					String resourceName = ScalableAppService.getNameForScalableApp(app.getBinding());
+					String resourceName = ScalableAppService.getNameForScalableApp(app.getBinding(), httpWrapper);
 					if (resourceName != null && !resourceName.isEmpty()) {
 						log.info("Updating resource name of " + app.getBinding().getIdentifierStringForLogs() + " to '" + resourceName + "'.");
 						app.getBinding().setResourceName(resourceName);

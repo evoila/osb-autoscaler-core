@@ -25,10 +25,16 @@ public class ScalingEnginePropertiesBean {
 	private int port;
 	
 	/**
-	 * Endpoint to communicate with the Scaling Engine
+	 * Endpoint to communicate with the Scaling Engine for scaling
 	 */
 	@Value("${engine.endpoint.scaling}")
 	private String scalingEndpoint;
+	
+	/**
+	 * Endpoint to communicate with the Scaling Engine for names
+	 */
+	@Value("${engine.endpoint.name}")
+	private String nameEndpoint;
 	
 	/**
 	 * Secret String to authenticate at the Scaling Engine
@@ -72,5 +78,13 @@ public class ScalingEnginePropertiesBean {
 
 	public void setSecret(String secret) {
 		this.secret = secret;
+	}
+
+	public String getNameEndpoint() {
+		return nameEndpoint;
+	}
+
+	public void setNameEndpoint(String nameEndpoint) {
+		this.nameEndpoint = nameEndpoint;
 	}
 }

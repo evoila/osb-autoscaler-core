@@ -5,15 +5,17 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 
+import de.cf.autoscaler.api.ApplicationNameRequest;
 import de.cf.autoscaler.api.binding.Binding;
-import de.cf.autoscaler.api.binding.BindingContext;
 import de.cf.autoscaler.api.binding.InvalidBindingException;
 import de.cf.autoscaler.exception.InvalidPolicyException;
 import de.cf.autoscaler.exception.InvalidWorkingSetException;
 import de.cf.autoscaler.exception.LimitException;
 import de.cf.autoscaler.exception.SpecialCharacterException;
 import de.cf.autoscaler.exception.TimeException;
+import de.cf.autoscaler.http.HTTPWrapper;
 import de.cf.autoscaler.http.response.ResponseApplication;
 import de.cf.autoscaler.kafka.messages.ApplicationMetric;
 import de.cf.autoscaler.kafka.messages.AutoscalerMetric;
@@ -134,26 +136,6 @@ public class ScalableAppService {
 			throw new TimeException("LearningStartTime is smaller than 0 or smaller than creationTime.");
 		if (creationTime < 0) 
 			throw new TimeException("CreationTime is smaller than 0.");
-		return true;
-	}
-	
-	/**
-	 * Checks whether the given binding information are in a valid state in regards to the Autoscaler.
-	 * @param binding wrapper class for the binding information
-	 * @return true if the names are valid
-	 * @throws SpecialCharacterException if an special character was found
-	 */
-	// use the isValid method from BindingContext to check the ids
-	@Deprecated
-	private static boolean areValidBindingInformation(Binding binding) throws SpecialCharacterException {
-		if (!binding.getResourceId().matches("\\w*")) {
-			for (int i = 0; i < binding.getResourceId().length(); i++) {
-				if (String.valueOf(binding.getResourceId().charAt(i)).matches("\\W*") && binding.getResourceId().charAt(i)!= '-' ) {
-					throw new SpecialCharacterException("resourceId contains special characters.");
-				}
-			}
-		}	
-		
 		return true;
 	}
 	
@@ -352,8 +334,14 @@ public class ScalableAppService {
 		}
 	}
 	
-	public static String getNameForScalableApp(Binding binding) {
-		log.error("Not supported yet.");
-		return "";
+	public static String getNameForScalableApp(Binding binding, HTTPWrapper wrapper) {
+		ResponseEntity<ApplicationNameRequest> response = wrapper.getNameFromScalingEngine(binding.getResourceId(), binding.getContext());
+		ApplicationNameRequest body = response.getBody();
+		log.debug("Name request returned with " + response.getStatusCodeValue() + " " + response.getStatusCode().name()
+				+ " - " + response.getBody());
+		
+		if (body.getName()== null)
+			return "";
+		return body.getName();
 	}
 }

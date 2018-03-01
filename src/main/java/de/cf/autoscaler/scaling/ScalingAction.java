@@ -55,18 +55,14 @@ public class ScalingAction {
 	 * @param engineProperties property bean for settings of the Scaling Engine
 	 * @param producer Producer to publish on the message broker
 	 */
-	public void executeAction(ScalingEnginePropertiesBean engineProperties, ProtobufProducer producer) {
+	public void executeAction(HTTPWrapper httpWrapper, ProtobufProducer producer) {
 		if (needToScale && isValid()) {
 			long scalingTime = System.currentTimeMillis();
 			app.setLastScalingTime(scalingTime);
 			try {
-				ResponseEntity<String> response = HTTPWrapper.scale(engineProperties.getHost()
-						, engineProperties.getPort()
-						, engineProperties.getScalingEndpoint()
-						, app.getBinding().getResourceId()
+				ResponseEntity<String> response = httpWrapper.scale(app.getBinding().getResourceId()
 						, app.getBinding().getContext()
-						, newInstances
-						, engineProperties.getSecret());
+						, newInstances);
 				
 				if (newInstances > oldInstances)
 					log.info("Upscaled app "+app.getIdentifierStringForLogs() + ": Statuscode "

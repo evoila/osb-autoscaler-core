@@ -111,7 +111,7 @@ public class ConsumerManager {
 		predictionConsumer = new PredictionConsumer(kafkaProps.getPredicTopic(), predictionConsumerGroupId
 				, kafkaProps.getHost(), kafkaProps.getPort(), appManager);
 		predictionConsumer.startConsumer();
-		log.info("New predictio consumer started.");
+		log.info("New prediction consumer started.");
 	}
 	
 	/**
