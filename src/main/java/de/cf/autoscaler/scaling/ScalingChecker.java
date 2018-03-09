@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.kafka.messages.ScalingLog;
+import de.cf.autoscaler.properties.AutoscalerPropertiesBean;
 import de.cf.autoscaler.scaling.prediction.Prediction;
 
 /**
@@ -20,9 +21,24 @@ public class ScalingChecker {
 	private static Logger log = LoggerFactory.getLogger(ScalingChecker.class);
 	
 	/**
+	 * Number of instances to add or subtract from the instance count when scaling without the quotient.
+	 * This is altered by the {@linkplain Scaler#init()} method with the value from the {@linkplain AutoscalerPropertiesBean}.
+	 */
+	private static int staticScalingSize = 1;
+
+
+	/**
 	 * Private constructor as there is no need for an object of this class.
 	 */
 	private ScalingChecker() {}
+	
+	public static int getStaticScalingSize() {
+		return staticScalingSize;
+	}
+
+	public static void setStaticScalingSize(int staticScalingSize) {
+		ScalingChecker.staticScalingSize = staticScalingSize;
+	}
 	
 	/**
 	 * Get a {@linkplain ScalingAction} based on CPU values.
@@ -271,11 +287,11 @@ public class ScalingChecker {
 		ScalingAction act = null;
 		
 		if (currentValue > upperLimit) {
-			newInstances = instances + 1;
+			newInstances = instances + staticScalingSize;
 			desc = "Upscaled - " + descriptionFiller + " over " + upperLimit + " - without quotient ";
 			act = new ScalingAction(app, newInstances, instances, true, component, desc);	
 		} else if (currentValue < lowerLimit) {
-			newInstances = instances - 1;
+			newInstances = instances - staticScalingSize;
 			desc = "Downscaled - " + descriptionFiller + " below "+ lowerLimit + " - without quotient ";
 			act = new ScalingAction(app, newInstances, instances, true, component, desc);
 		} else if (currentValue <= upperLimit && currentValue >= lowerLimit) {

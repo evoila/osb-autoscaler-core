@@ -16,6 +16,7 @@ import de.cf.autoscaler.applications.ScalableAppService;
 import de.cf.autoscaler.http.HTTPWrapper;
 import de.cf.autoscaler.kafka.producer.ProtobufProducer;
 import de.cf.autoscaler.manager.ScalableAppManager;
+import de.cf.autoscaler.properties.AutoscalerPropertiesBean;
 
 /**
  * Core class with the check scaling loop.
@@ -54,6 +55,12 @@ public class Scaler {
 	private HTTPWrapper httpWrapper;
 	
 	/**
+	 * Property bean for properties concerning the scaler itself.
+	 */
+	@Autowired
+	private AutoscalerPropertiesBean autoscalerProps;
+	
+	/**
 	 * Mutex to get the scaling checks triggered based on time by a {@linkplain TimerThread}
 	 */
 	private Semaphore checkScalingMutex;
@@ -76,7 +83,8 @@ public class Scaler {
 	}
 	
 	/**
-	 * Gets called after construction of the service by spring to create and start the TimerThread.
+	 * Gets called after construction of the service by spring to create and start the TimerThread and sets the static scaling size in the 
+	 * {@linkplain ScalingChecker} class.
 	 */
 	@PostConstruct
 	public void init() {
@@ -84,6 +92,7 @@ public class Scaler {
 		timer.start();
 		scalingThread = new ScalingThread(this);
 		scalingThread.start();
+		ScalingChecker.setStaticScalingSize(autoscalerProps.getStaticScalingSize());
 	}
 	
 	/**

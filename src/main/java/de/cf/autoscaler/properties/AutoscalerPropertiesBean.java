@@ -31,6 +31,12 @@ public class AutoscalerPropertiesBean {
 	private boolean getAppNameFromScalingEngineAtBinding;
 	
 	/**
+	 * Number of instances to add or subtract from the instance count when scaling static.
+	 */
+	@Value("${scaler.staticScalingSize}")
+	private int staticScalingSize;
+	
+	/**
 	 * Constructor for Spring to inject the bean.
 	 */
 	public AutoscalerPropertiesBean() { }
@@ -57,5 +63,13 @@ public class AutoscalerPropertiesBean {
 
 	public void setGetAppNameFromScalingEngineAtBinding(boolean getAppNameFromScalingEngineAtBinding) {
 		this.getAppNameFromScalingEngineAtBinding = getAppNameFromScalingEngineAtBinding;
+	}
+
+	public int getStaticScalingSize() {
+		return staticScalingSize;
+	}
+
+	public void setStaticScalingSize(int staticScalingSize) {
+		this.staticScalingSize = staticScalingSize;
 	}
 }
