@@ -201,7 +201,10 @@ public class ManagingController extends BaseController{
 						log.info("Updating resource name of " + app.getBinding().getIdentifierStringForLogs() + " to '" + resourceName + "'.");
 						app.getBinding().setResourceName(resourceName);
 					} else {
-						log.info("Could not update resource name of " + app.getBinding().getIdentifierStringForLogs() + ", because the retreived name is empty or null.");
+						log.info("Could not update resource name of " + app.getBinding().getIdentifierStringForLogs() + ", because the retrieved name is empty or null.");
+						app.release();
+						return new ResponseEntity<String>("{\"message\" : \"Could not update the name. This might be caused by corrupt binding information"
+								+ " or the application is not findable by the scaling engine. \"}",HttpStatus.NOT_FOUND);
 					}
 					responseApp = ScalableAppService.getSerializationObjectWithoutLock(app);
 				} catch (InterruptedException ex) {

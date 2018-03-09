@@ -37,6 +37,9 @@ public abstract class BaseController {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorMessage> handleException(Exception ex, 
 			HttpServletResponse response) {
+		log.warn("An unexpected exception ocurred and had to be catched by the BaseController. "
+				+ "Therefore a release() action may have been missed on a mutex of a ScalableApp causing a Deadlock."
+				+ "Please make sure this is not the case. Possible consequences could be that only the TimerThread will continue to write out logs.");
 		log.warn("Exception", ex);
 	    return processErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}

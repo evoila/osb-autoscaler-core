@@ -828,6 +828,7 @@ public class ScalableApp {
 	 * Calls the release() method of the underlying {@link #accessMutex}.
 	 */
 	public void release() {
-		accessMutex.release();
+		if (accessMutex.availablePermits() <= 1)
+			accessMutex.release();
 	}
 }

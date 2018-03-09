@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import de.cf.autoscaler.api.ApplicationNameRequest;
@@ -87,6 +88,14 @@ public class HTTPWrapper {
 		HttpEntity<?> request = new HttpEntity<>(nameRequest, headers);
 		log.debug("Sending name request to " + url + " - " + nameRequest.toString());
 		
-		return restTemplate.postForEntity(url, request, ApplicationNameRequest.class);
+		ResponseEntity<ApplicationNameRequest> response = null;
+		try {
+			response = restTemplate.postForEntity(url, request, ApplicationNameRequest.class);
+		} catch (RestClientException ex) {
+			log.warn("Exception during a name request for '" + resourceId + "' to scaling engine at '" + url + "'."
+					+ " Maybe the scaling engine could not find an application for the given resourceId"
+					+ " or an invalid ApplicationNameRequest was used as the body for the request.");
+		}
+		return response;
 	}
 }

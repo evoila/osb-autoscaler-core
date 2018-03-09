@@ -336,6 +336,9 @@ public class ScalableAppService {
 	
 	public static String getNameForScalableApp(Binding binding, HTTPWrapper wrapper) {
 		ResponseEntity<ApplicationNameRequest> response = wrapper.getNameFromScalingEngine(binding.getResourceId(), binding.getContext());
+		if (response == null) 
+			return "";
+			
 		ApplicationNameRequest body = response.getBody();
 		log.debug("Name request returned with " + response.getStatusCodeValue() + " " + response.getStatusCode().name()
 				+ " - " + response.getBody());
