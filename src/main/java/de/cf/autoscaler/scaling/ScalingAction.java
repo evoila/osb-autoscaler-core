@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 
 import de.cf.autoscaler.applications.ScalableApp;
 import de.cf.autoscaler.http.HTTPWrapper;
@@ -79,6 +80,10 @@ public class ScalingAction {
 			} catch (HttpServerErrorException ex) {
 				log.error("Scaling request threw HttpServerErrorException with " + ex.getRawStatusCode() + " " + ex.getStatusText()
 						+ " - " + ex.getResponseBodyAsString());
+			} catch (RestClientException ex){
+				log.error("Encountered a RestClientException while sending a scaling request to a scaling engine. "
+						+ "Possible causes for this could be that the scaling engine is not reachable"
+						+ " or the scaling engine could not find a matching object for the given resourceId.", ex);
 			}
 		} else if (!isValid()) {
 			log.error("A ScalingAction for " + app.getIdentifierStringForLogs() + " is not valid.");
