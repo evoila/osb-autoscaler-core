@@ -28,7 +28,9 @@ Example body for 200:
         {
             "id": "exampleBinding",
             "resourceId": "1234567890",
+            "resourceName": "exampleBindingName",
             "scalerId": "0",
+            "serviceId": "1",
             "creationTime": 1511429355735,
             "context": {
                 "platform": "cloudfoundry",
@@ -39,7 +41,9 @@ Example body for 200:
         {
             "id": "anotherExampleBinding",
             "resourceId": "0987654321",
+            "resourceName": "anotherExampleBindingName",
             "scalerId": "0",
+            "serviceId": "0",
             "creationTime": 1511952821309,
             "context": {
                 "platform": "cloudfoundry",
