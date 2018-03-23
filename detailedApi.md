@@ -90,7 +90,9 @@ Example body for 201:
     "binding": {
         "id": "exampleBinding",
         "resourceId": "0123456789",
+        "resourceName": "exampleAppName",
         "scalerId": "0",
+        "serviceId": "1",
         "creationTime": 1512050206563,
         "context": {
             "platform": "cloudfoundry",
