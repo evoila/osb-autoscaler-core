@@ -9,9 +9,10 @@
     <name>osb-autoscaler-core</name>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.10.RELEASE</version>
+        <groupId>de.evoila.cf.broker</groupId>
+        <artifactId>repo-parent</artifactId>
+        <relativePath>../</relativePath>
+        <version>1.2.0</version>
     </parent>
 
     <properties>
