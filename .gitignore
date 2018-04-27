@@ -16,3 +16,6 @@ src/main/resources/application.properties
 manifest.yml
 .idea/
 core.iml
+osb-autoscaler-core/src/main/resources/old-application.properties
+osb-autoscaler-core/cf-service-broker-autoscaler.log
+osb-autoscaler-core/osb-autoscaler-core.log

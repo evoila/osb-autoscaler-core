@@ -26,4 +26,4 @@ server:
 logging:
   file: ${LOG_FILE:osb-autoscaler-core.log}
   level:
-    root: ${LOG_LEVEL_ROOT:INFo}
+    root: ${LOG_LEVEL_ROOT:INFO}
