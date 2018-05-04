@@ -31,7 +31,7 @@ public class Application {
 	public static void main(String[] args) {
 		
 		ApplicationContext ctx = SpringApplication.run(Application.class, args);
-	    Assert.notNull(ctx); 
+	    Assert.notNull(ctx, "Could not start the application context."); 
 	}
 	
 	@Bean

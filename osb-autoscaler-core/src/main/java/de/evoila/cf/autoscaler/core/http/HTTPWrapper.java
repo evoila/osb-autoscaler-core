@@ -55,7 +55,10 @@ public class HTTPWrapper {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("secret", engineProps.getSecret());
 		headers.add("Content-Type", "application/json");
-		String url = "http://"+engineProps.getHost()+"/"+engineProps.getScalingEndpoint()+"/"+resourceId;
+		String url = engineProps.getHost()+"/"+engineProps.getScalingEndpoint()+"/"+resourceId;
+		if (! (url.startsWith("http://") || url.startsWith("https://")) ) {
+			url = "http://"+ url;
+		}	
 		ScalingRequest scalingOrder = new ScalingRequest(newInstances, context);
 		HttpEntity<?> request = new HttpEntity<>(scalingOrder, headers);
 		log.debug("Sending scaling request to " + url + " - " + scalingOrder.toString());
@@ -75,7 +78,10 @@ public class HTTPWrapper {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("secret", engineProps.getSecret());
 		headers.add("Content-Type", "application/json");
-		String url = "http://"+ engineProps.getHost() +"/"+ engineProps.getNameEndpoint() +"/"+resourceId;
+		String url = engineProps.getHost() +"/"+ engineProps.getNameEndpoint() +"/"+resourceId;
+		if (! (url.startsWith("http://") || url.startsWith("https://")) ) {
+			url = "http://"+ url;
+		}	
 		ApplicationNameRequest nameRequest = new ApplicationNameRequest(resourceId, "", context);
 		HttpEntity<?> request = new HttpEntity<>(nameRequest, headers);
 		log.debug("Sending name request to " + url + " - " + nameRequest.toString());
@@ -84,9 +90,11 @@ public class HTTPWrapper {
 		try {
 			response = restTemplate.postForEntity(url, request, ApplicationNameRequest.class);
 		} catch (RestClientException ex) {
-			log.warn("Exception during a name request for '" + resourceId + "' to scaling engine at '" + url + "'."
+			log.error(ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			log.error("Exception during a name request for '" + resourceId + "' to scaling engine at '" + url + "'."
 					+ " Maybe the scaling engine could not find an application for the given resourceId"
 					+ " or an invalid ApplicationNameRequest was used as the body for the request.");
+			
 		}
 		return response;
 	}
