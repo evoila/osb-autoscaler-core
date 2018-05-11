@@ -165,12 +165,26 @@ public class ScalableAppManager {
 	
 	/**
 	 * See {@linkplain #contains(ScalableApp)}
-	 * @param bindingId ID of the application to look for
-	 * @return true if the list contains an application with an id equal to the given one 
+	 * @param bindingId ID of the binding to look for
+	 * @return true if the list contains an application with a binding id equal to the given one 
 	 */
 	public boolean contains(String bindingId) {
 		for (int i = 0; i < apps.size(); i++) {
 			if (apps.get(i).getBinding().getId().equals(bindingId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * See {@linkplain #contains(ScalableApp)}
+	 * @param resourceId ID of the resource to look for
+	 * @return true if the list contains an application with a resource id equal to the given one 
+	 */
+	public boolean containsResourceId(String resourceId) {
+		for (int i = 0; i < apps.size(); i++) {
+			if (apps.get(i).getBinding().getResourceId().equals(resourceId)) {
 				return true;
 			}
 		}

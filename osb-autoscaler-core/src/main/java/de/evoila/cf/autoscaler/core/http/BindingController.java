@@ -69,6 +69,11 @@ public class BindingController extends BaseController {
 						"{ \"error\" : \"An other binding was found with the same id.\" }");
 			}
 			
+			if (appManager.containsResourceId(binding.getResourceId())) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(
+						"{ \"error\" : \"An other binding was found with the same resource id.\" }");
+			}
+			
 			if (autoscalerProps.isGetAppNameFromScalingEngineAtBinding()) {
 				newApp.getBinding().setResourceName(ScalableAppService.getNameForScalableApp(newApp.getBinding(), httpWrapper));
 			}
