@@ -65,6 +65,10 @@ public class AutoscalerPropertiesBean {
 	}
 
 	public void setStaticScalingSize(int staticScalingSize) {
-		this.staticScalingSize = staticScalingSize;
+		if (staticScalingSize > 0) {
+			this.staticScalingSize = staticScalingSize;
+		} else {
+			this.staticScalingSize = 1;
+		}
 	}
 }
