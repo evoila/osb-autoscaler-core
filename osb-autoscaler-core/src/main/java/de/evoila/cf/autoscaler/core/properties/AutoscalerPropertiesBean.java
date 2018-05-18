@@ -24,7 +24,7 @@ public class AutoscalerPropertiesBean {
 	/**
 	 * Boolean value, whether to ask the scaling engine for the application name when creating a new binding.
 	 */
-	private boolean getAppNameFromScalingEngineAtBinding;
+	private boolean updateAppNameAtBinding;
 	
 	/**
 	 * Number of instances to add or subtract from the instance count when scaling static.
@@ -52,12 +52,12 @@ public class AutoscalerPropertiesBean {
 		this.maxMetricAge = maxMetricAge;
 	}
 
-	public boolean isGetAppNameFromScalingEngineAtBinding() {
-		return getAppNameFromScalingEngineAtBinding;
+	public boolean isUpdateAppNameAtBinding() {
+		return updateAppNameAtBinding;
 	}
 
-	public void setGetAppNameFromScalingEngineAtBinding(boolean getAppNameFromScalingEngineAtBinding) {
-		this.getAppNameFromScalingEngineAtBinding = getAppNameFromScalingEngineAtBinding;
+	public void setUpdateAppNameAtBinding(boolean updateAppNameAtBinding) {
+		this.updateAppNameAtBinding = updateAppNameAtBinding;
 	}
 
 	public int getStaticScalingSize() {
