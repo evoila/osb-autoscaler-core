@@ -188,6 +188,8 @@ public class ManagingController extends BaseController{
 					if (resourceName != null && !resourceName.isEmpty()) {
 						log.info("Updating resource name of " + app.getBinding().getIdentifierStringForLogs() + " to '" + resourceName + "'.");
 						app.getBinding().setResourceName(resourceName);
+						appManager.updateInDatabase(app);
+						log.debug("Updated app " + app.getBinding().getIdentifierStringForLogs() + " in the database.");
 					} else {
 						log.info("Could not update resource name of " + app.getBinding().getIdentifierStringForLogs() + ", because the retrieved name is empty or null.");
 						app.release();
