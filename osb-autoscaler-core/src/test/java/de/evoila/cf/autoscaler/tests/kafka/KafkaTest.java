@@ -57,13 +57,15 @@ public class KafkaTest {
 		long ram = (long) (500 * Math.random() * 1024 * 1024);
 		int instanceIndex = (int) (Math.random() * 10);
 		String appId = "testAppId";
+		String appName = "testAppName";
+		String space = "test-space";
 		String desc = "This is a test container metric.";
 		
 		try {
 			Thread.sleep(SECONDS_TO_SLEEP * 1000);
 		} catch (InterruptedException ex) {}
 		
-		ContainerMetric metric = new ContainerMetric(System.currentTimeMillis(), "testContainerMetric", appId, cpu , ram, instanceIndex, desc);
+		ContainerMetric metric = new ContainerMetric(System.currentTimeMillis(), "testContainerMetric", appId, appName, space, cpu , ram, instanceIndex, desc);
 		producer.produce(metric, TOPIC_CONTAINER);
 		
 		try {
