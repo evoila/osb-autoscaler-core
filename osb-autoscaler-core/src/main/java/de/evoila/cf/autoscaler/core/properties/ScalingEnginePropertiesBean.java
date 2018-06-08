@@ -1,6 +1,7 @@
 package de.evoila.cf.autoscaler.core.properties;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,44 +11,54 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
+@ConfigurationProperties(prefix = "engine")
 public class ScalingEnginePropertiesBean {
 
 	/**
 	 * IP or URL of the Scaling Engine
 	 */
-	@Value("${engine.host}")
 	private String host;
 	
 	/**
 	 * Port to connect to the Scaling Engine
 	 */
-	@Value("${engine.port}")
 	private int port;
-	
-	/**
-	 * Endpoint to communicate with the Scaling Engine for scaling
-	 */
-	@Value("${engine.endpoint.scaling}")
-	private String scalingEndpoint;
-	
-	/**
-	 * Endpoint to communicate with the Scaling Engine for names
-	 */
-	@Value("${engine.endpoint.name}")
-	private String nameEndpoint;
-	
+
 	/**
 	 * Secret String to authenticate at the Scaling Engine
 	 */
-	@Value("${engine.secret}")
 	private String secret;
+
+	private Endpoint endpoint;
+
+	public static class Endpoint {
+		private String scaling;
+
+		private String name;
+
+		public String getScaling() {
+			return scaling;
+		}
+
+		public void setScaling(String scaling) {
+			this.scaling = scaling;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
+
 
 	/**
 	 * Constructor for Spring to inject the bean.
 	 */
 	public ScalingEnginePropertiesBean() { }
 
-	
 	public String getHost() {
 		return host;
 	}
@@ -64,14 +75,6 @@ public class ScalingEnginePropertiesBean {
 		this.port = port;
 	}
 
-	public String getScalingEndpoint() {
-		return scalingEndpoint;
-	}
-
-	public void setScalingEndpoint(String scalingEndpoint) {
-		this.scalingEndpoint = scalingEndpoint;
-	}
-
 	public String getSecret() {
 		return secret;
 	}
@@ -80,11 +83,11 @@ public class ScalingEnginePropertiesBean {
 		this.secret = secret;
 	}
 
-	public String getNameEndpoint() {
-		return nameEndpoint;
+	public Endpoint getEndpoint() {
+		return endpoint;
 	}
 
-	public void setNameEndpoint(String nameEndpoint) {
-		this.nameEndpoint = nameEndpoint;
+	public void setEndpoint(Endpoint endpoint) {
+		this.endpoint = endpoint;
 	}
 }

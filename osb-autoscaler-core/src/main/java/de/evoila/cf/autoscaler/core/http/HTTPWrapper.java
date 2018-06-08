@@ -55,7 +55,7 @@ public class HTTPWrapper {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("secret", engineProps.getSecret());
 		headers.add("Content-Type", "application/json");
-		String url = engineProps.getHost()+"/"+engineProps.getScalingEndpoint()+"/"+resourceId;
+		String url = engineProps.getHost()+"/"+engineProps.getEndpoint().getScaling()+"/"+resourceId;
 		if (! (url.startsWith("http://") || url.startsWith("https://")) ) {
 			url = "http://"+ url;
 		}	
@@ -78,7 +78,7 @@ public class HTTPWrapper {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("secret", engineProps.getSecret());
 		headers.add("Content-Type", "application/json");
-		String url = engineProps.getHost() +"/"+ engineProps.getNameEndpoint() +"/"+resourceId;
+		String url = engineProps.getHost() +"/"+ engineProps.getEndpoint().getName() +"/"+resourceId;
 		if (! (url.startsWith("http://") || url.startsWith("https://")) ) {
 			url = "http://"+ url;
 		}	
