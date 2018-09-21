@@ -146,7 +146,7 @@ public class ScalableAppManager {
 	public boolean remove(ScalableApp app) {
 		if (contains(app)) {
 			apps.remove(app);
-			appRepository.delete(app.getBinding().getId());
+			appRepository.deleteById(app.getBinding().getId());
 			stringProducer.produceBinding(StringProducer.DELETING, app.getBinding().getId(), app.getBinding().getResourceId(), app.getBinding().getScalerId());
 			log.info("Removed following app from ScalableAppManager: "+app.getIdentifierStringForLogs());
 			return true;

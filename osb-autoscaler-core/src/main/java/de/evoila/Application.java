@@ -1,5 +1,6 @@
 package de.evoila;
 
+
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
 import org.springframework.boot.SpringApplication;
@@ -31,7 +32,7 @@ public class Application {
 	public static void main(String[] args) {
 		
 		ApplicationContext ctx = SpringApplication.run(Application.class, args);
-	    Assert.notNull(ctx, "Could not start the application context."); 
+	    Assert.notNull(ctx, "Could not start the application context.");
 	}
 	
 	@Bean
