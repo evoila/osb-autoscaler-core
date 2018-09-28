@@ -19,3 +19,6 @@ core.iml
 osb-autoscaler-core/src/main/resources/old-application.properties
 osb-autoscaler-core/cf-service-broker-autoscaler.log
 osb-autoscaler-core/osb-autoscaler-core.log
+repo-parent.iml
+osb-autoscaler-core/osb-autoscaler-core.iml
+osb-autoscaler-core/src/main/resources/application-local.properties

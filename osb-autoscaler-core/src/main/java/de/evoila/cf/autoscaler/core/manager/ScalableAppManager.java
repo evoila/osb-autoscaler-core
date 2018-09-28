@@ -114,6 +114,7 @@ public class ScalableAppManager {
 							+bp.getBinding().getIdentifierStringForLogs()+" : "+ex.getMessage());
 			}
 		}
+		log.info("Imports from database complete.");
 	}
 	
 	/**

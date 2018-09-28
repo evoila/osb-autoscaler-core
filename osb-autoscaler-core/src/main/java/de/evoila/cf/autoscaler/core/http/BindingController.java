@@ -76,7 +76,7 @@ public class BindingController extends BaseController {
 					log.info("Found a indentical binding.");
 					return ResponseEntity.status(HttpStatus.OK).body("{}");
 				}
-				log.info("Found a binding with in conflict with the newly requested.");
+				log.info("Found a binding in conflict with the newly requested.");
 				return ResponseEntity.status(HttpStatus.CONFLICT).body(
 						"{ \"error\" : \"An other binding was found with the same id.\" }");
 			}

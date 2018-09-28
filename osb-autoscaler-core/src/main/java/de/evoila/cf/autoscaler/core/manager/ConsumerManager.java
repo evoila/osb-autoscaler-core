@@ -99,7 +99,7 @@ public class ConsumerManager {
 				, httpConsumerGroupId, kafkaProps.getHost(), kafkaProps.getPort(), scalerProperties.getMaxMetricAge(), appManager);
 		requestConsumers.add(newConsumer);
 		newConsumer.startConsumer();
-		log.info("New request consumer #"+containerConsumers.size()+" started.");
+		log.info("New request consumer #"+requestConsumers.size()+" started.");
 	}
 	
 	/**
