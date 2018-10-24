@@ -8,10 +8,11 @@ import de.evoila.cf.autoscaler.core.applications.ScalableAppService;
 import de.evoila.cf.autoscaler.core.data.mongodb.AppBlueprintRepository;
 import de.evoila.cf.autoscaler.core.exception.*;
 import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
-import de.evoila.cf.autoscaler.core.kafka.producer.StringProducer;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
+import de.evoila.cf.autoscaler.kafka.model.BindingInformation;
+import de.evoila.cf.autoscaler.kafka.producer.KafkaJsonProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,6 @@ public class ScalableAppManager {
 	/**
 	 * Property Bean for Kafka Settings.
 	 */
-	@Autowired
 	private KafkaPropertiesBean kafkaProperties;
 	
 	/**
@@ -66,10 +66,11 @@ public class ScalableAppManager {
 	private ProtobufProducer protobufProducer;
 	
 	/**
-	 * Producer to publish String messages on Kafka.
+	 * Producer to publish JSON messages on Kafka.
+	 * This will be the case when binding or unbinding.
 	 */
 	@Autowired
-	private StringProducer stringProducer;
+	private KafkaJsonProducer jsonProducer;
 	
 	/**
 	 * Internal list of all {@linkplain ScalableApp} objects bound to the Autoscaler.
@@ -79,7 +80,8 @@ public class ScalableAppManager {
 	/**
 	 * Basic constructor for setting up the manager.
 	 */
-	public ScalableAppManager() {
+	public ScalableAppManager(KafkaPropertiesBean kafkaProperties) {
+		this.kafkaProperties = kafkaProperties;
 		apps = new ArrayList<ScalableApp>();
 	}
 
@@ -126,14 +128,15 @@ public class ScalableAppManager {
 	public boolean add(ScalableApp app, boolean loadedFromDatabase) {
 		if (!contains(app)) {
 			apps.add(app);
-			String action = StringProducer.LOADING;
+			String action = BindingInformation.ACTION_LOAD;
 			log.debug("Added following app to ScalableAppManager: "+app.getIdentifierStringForLogs());
 			if (!loadedFromDatabase) {
 				appRepository.save(app.getCopyOfBlueprint());
-				action = StringProducer.CREATING;
+				action = BindingInformation.ACTION_BIND;
 				log.info("Bound following app: "+app.getIdentifierStringForLogs());
 			}
-			stringProducer.produceBinding(action, app.getBinding().getId(), app.getBinding().getResourceId(), app.getBinding().getScalerId());
+			jsonProducer.produceKafkaMessage(kafkaProperties.getBindingTopic(), new BindingInformation(app.getBinding().getResourceId(),
+					action, BindingInformation.SOURCE_AUTOSCALER));
 			return true;
 		}
 		return false;
@@ -148,7 +151,8 @@ public class ScalableAppManager {
 		if (contains(app)) {
 			apps.remove(app);
 			appRepository.deleteById(app.getBinding().getId());
-			stringProducer.produceBinding(StringProducer.DELETING, app.getBinding().getId(), app.getBinding().getResourceId(), app.getBinding().getScalerId());
+			jsonProducer.produceKafkaMessage(kafkaProperties.getBindingTopic(), new BindingInformation(app.getBinding().getResourceId(),
+					BindingInformation.ACTION_UNBIND, BindingInformation.SOURCE_AUTOSCALER));
 			log.info("Removed following app from ScalableAppManager: "+app.getIdentifierStringForLogs());
 			return true;
 		}

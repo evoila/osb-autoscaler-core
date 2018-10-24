@@ -36,7 +36,7 @@ public class TestBase {
 		autoscalerProps = new AutoscalerPropertiesBean();
 		autoscalerProps.setMaxMetricListSize(10000);
 		autoscalerProps.setMaxMetricAge(35 * 1000);
-		producer = new ProtobufProducer();
+		producer = new ProtobufProducer(kafkaProps);
 		AppBlueprint bp;
 		bp = setUpBluePrint();
 		app = new ScalableApp(bp, kafkaProps, autoscalerProps, producer);

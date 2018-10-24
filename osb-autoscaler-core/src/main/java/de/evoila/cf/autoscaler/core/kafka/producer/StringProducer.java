@@ -4,7 +4,6 @@ import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -20,34 +19,15 @@ import java.util.Properties;
 public class StringProducer {
 
 	/**
-	 * Constant for symbolizing creation as action.
-	 */
-	public static final String CREATING = "creating";
-	/**
-	 * Constant for symbolizing deletion as action.
-	 */
-	public static final String DELETING = "deleting";
-	
-	/**
-	 * Constant for symbolizing loading from the database as action.
-	 */
-	public static final String LOADING = "loading";
-	
-	/**
 	 * Property Bean for Kafka Settings.
 	 */
-	@Autowired
 	private KafkaPropertiesBean kafkaProps;
 	
 	/**
 	 * IP or URL of Kafka and its port.
 	 */
 	private String host;
-	/**
-	 * Topic to publish binding Strings on.
-	 */
-	private String bindingTopic;
-	
+
 	/**
 	 * Underlying Kafka producer.
 	 */
@@ -56,7 +36,7 @@ public class StringProducer {
 	/** 
 	 * Default constructor for Spring to inject this service.
 	 */
-	public StringProducer() { }
+	public StringProducer(KafkaPropertiesBean kafkaProps) {this.kafkaProps = kafkaProps; }
 	
 	/**
 	 * Set up the fields of the producer after construction by Spring.
@@ -64,8 +44,7 @@ public class StringProducer {
 	@PostConstruct
 	private void init() {
 		host = kafkaProps.getHost()+":"+kafkaProps.getPort();
-		bindingTopic = kafkaProps.getBindingTopic();
-		
+
         Properties configProperties = new Properties();
         configProperties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         configProperties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
@@ -78,20 +57,12 @@ public class StringProducer {
 	}
 
 	/**
-	 * Publish a binding String on Kafka.
-	 * @param deleting boolean if the message is deletion event
-	 * @param appId id of the application
+	 * Publishs a message in the String format on the given topic.
+	 * @param topic Kafka topic to publish on
+	 * @param message message to publish
 	 */
-	/**
-	 * Publish a binding action String on Kafka.
-	 * @param action type of action what was performed
-	 * @param bindingId id of the binding
-	 * @param resourceId id of the resource
-	 * @param scalerId id of the scaler
-	 */
-	public void produceBinding(String action, String bindingId, String resourceId, String scalerId) {
-		String output = "binding: "+ bindingId + ", resourceId: " + resourceId + ", scalerId: " + scalerId + ", action: " + action;
-        ProducerRecord<String, String> rec = new ProducerRecord<String, String>(bindingTopic, output);
-        producer.send(rec);
+	public void produceString(String topic, String message) {
+		ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, message);
+		producer.send(record);
 	}
 }

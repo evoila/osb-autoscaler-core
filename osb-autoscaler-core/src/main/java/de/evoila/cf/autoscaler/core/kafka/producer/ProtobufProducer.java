@@ -36,7 +36,6 @@ public class ProtobufProducer {
 	/**
 	 * Property Bean for Kafka Settings.
 	 */
-	@Autowired
 	private KafkaPropertiesBean kafkaProps;
 	
 	/**
@@ -63,7 +62,7 @@ public class ProtobufProducer {
 	/** 
 	 * Default constructor for Spring to inject this service.
 	 */
-	public ProtobufProducer() { }
+	public ProtobufProducer(KafkaPropertiesBean kafkaProps) {this.kafkaProps = kafkaProps;}
 	
 	/**
 	 * Set up the fields of the producer after construction by Spring.
