@@ -2,7 +2,6 @@ package de.evoila;
 
 
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
-import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,7 +21,6 @@ import org.springframework.web.filter.CorsFilter;
  */
 @SpringBootApplication
 @EnableMongoRepositories
-@EnableConfigurationProperties({KafkaPropertiesBean.class, AutoscalerPropertiesBean.class})
 public class Application {
 	
 	/**
