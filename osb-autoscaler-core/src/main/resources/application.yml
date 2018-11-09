@@ -1,0 +1,40 @@
+---
+### General Information ###
+info:
+  app:
+    name: Autoscaler Core Service Broker
+    description: Autoscaler Core Service Broker for Cloud Foundry Service Deployments
+    version: 1.2.0
+
+spring:
+  profiles: default
+  ### General Information ###
+  application:
+      name: osb-autoscaler-core
+  ### Security ###
+
+  ssl:
+    acceptselfsigned: true
+
+  rabbitmq:
+    host: "${RABBITMQ_HOST}"
+  data:
+    mongodb:
+      host: "${MONGODB_HOST}"
+
+haproxy:
+  uri: "https://${SERVICE_KEY_MANAGER}/agents/${HAPROXY_AGENT_ID}/schemas?type=listen"
+existing:
+  endpoint:
+    pcfHosts: "${HAPROXY_HOSTS}"
+    name: haproxy
+    port: 3306
+
+server:
+  port: ${SERVER_PORT:8080}
+
+### Logging ###
+logging:
+  file: ${LOG_FILE:osb-autoscaler-core.log}
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}

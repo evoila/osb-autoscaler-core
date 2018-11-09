@@ -1,0 +1,6 @@
+[submodule "osb-autoscaler-messaging"]
+	path = osb-autoscaler-messaging
+	url = git@github.com:evoila/osb-autoscaler-messaging.git
+[submodule "osb-autoscaler-api"]
+	path = osb-autoscaler-api
+	url = git@github.com:evoila/osb-autoscaler-api.git

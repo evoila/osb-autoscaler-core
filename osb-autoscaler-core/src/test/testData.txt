@@ -1,0 +1,19 @@
+{metricCount : 10}
+{cpu [(0:15), (0:81), (0:29), (0:45), (0:26), (0:112), (0:0), (0:137), (0:98), (0:77)]}
+{cpuMax : 137}
+{cpuMean : 62}
+{cpuMin : 0}
+{ram [(0:150), (0:356), (0:762), (0:1112), (0:402), (0:112), (0:343), (0:598), (0:273), (0:881)]}
+{ramMax : 1112}
+{ramMin : 112}
+{latency [112, 256, 177, 26, 83, 512, 1, 201, 98, 144]}
+{latencyMax : 512}
+{latencyMean : 161}
+{latencyMin : 1}
+{requests [1512, 1216, 4360, 5126, 838, 512, 171, 201, 981, 1444]}
+{requestMax : 5126}
+{requestMean : 1636}
+{requestMin : 171}
+
+// cpu and ram and latency and request need to have the same number of values
+// cpu and ram values are a pair, so its index are supposed to match (cpu index is used for computation)
