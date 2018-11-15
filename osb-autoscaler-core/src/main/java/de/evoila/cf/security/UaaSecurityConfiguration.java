@@ -35,7 +35,7 @@ public class UaaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         uaaRelyingPartyFilter.setFailureHandler(new UaaRelyingPartyAuthenticationFailureHandler());
 
         http.requestMatchers()
-                .antMatchers("/**")
+                .antMatchers("/manage/**")
                 .and()
                 .cors()
                 .and()

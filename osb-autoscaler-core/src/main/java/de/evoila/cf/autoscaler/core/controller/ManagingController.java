@@ -55,7 +55,7 @@ public class ManagingController extends BaseController {
      * @throws InvalidBindingException
      * @see ResponseEntity
      */
-    @RequestMapping(value = "/bindings/{appId}", method = RequestMethod.PATCH
+    @RequestMapping(value = "/manage/{appId}", method = RequestMethod.PATCH
             , consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateApp(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId,
                                        @RequestBody UpdateRequest requestBody) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException, InvalidBindingException {
@@ -93,7 +93,7 @@ public class ManagingController extends BaseController {
      * @return the response in form of a {@code ResponseEntity}
      * @see ResponseEntity
      */
-    @RequestMapping(value = "/bindings/{appId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/manage/{appId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> appInfo(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId) {
 
         ScalableApp app = scalableAppManager.get(appId);
@@ -115,7 +115,7 @@ public class ManagingController extends BaseController {
      * @param appId  ID of the application
      * @return the response in form of a {@code ResponseEntity}
      */
-    @RequestMapping(value = "/bindings/{appId}/resetQuotient", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/manage/{appId}/resetQuotient", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> resetQuotient(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId) {
 
         ScalableApp app = scalableAppManager.get(appId);
@@ -143,7 +143,7 @@ public class ManagingController extends BaseController {
      * @param appId  ID of the application
      * @return the response in form of a {@code ResponseEntity}
      */
-    @RequestMapping(value = "/bindings/{appId}/resetLST", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/manage/{appId}/resetLST", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> resetLearningStartTime(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId) {
         ScalableApp app = scalableAppManager.get(appId);
         if (app != null) {
@@ -166,11 +166,10 @@ public class ManagingController extends BaseController {
     /**
      * Handles incoming requests to update the name of a resource by requesting it from the scaling engine.
      *
-     * @param secret secret {@code String} to authorize with
      * @return the response in form of a {@code ResponseEntity}
      */
-    @RequestMapping(value = "/bindings/{bindingId}/updateName", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateResourceName(@RequestHeader(value = "secret") String secret, @PathVariable("bindingId") String bindingId) {
+    @RequestMapping(value = "/manage/{bindingId}/updateName", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateResourceName(@PathVariable("bindingId") String bindingId) {
         ScalableApp app = scalableAppManager.get(bindingId);
         if (app != null) {
             ResponseApplication responseApp;

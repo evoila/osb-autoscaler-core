@@ -42,7 +42,6 @@ public class BindingController extends BaseController {
     /**
      * Handles incoming request to get information about service instance specific existing bindings.
      *
-     * @param secret    {@code String} to authorize with
      * @param serviceId {@code String} of the service instance you want to get the bindings of
      * @return the response in form of a {@code ResponseEntity}
      */
@@ -58,14 +57,13 @@ public class BindingController extends BaseController {
 
         Map<String, List<Binding>> map = new HashMap<>();
         map.put("bindings", bindings);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return new ResponseEntity(map, HttpStatus.OK);
 
     }
 
     /**
      * Handles incoming requests to bind a new application.
      *
-     * @param secret  {@code String} to authorize with
      * @param binding information about the binding via a {@linkplain Binding} object
      * @return the response in form of a {@code ResponseEntity} with a related statuscode and either information about the new application or an other JSON String
      * @see ResponseEntity
@@ -80,10 +78,9 @@ public class BindingController extends BaseController {
         ScalableApp newApp = scalableAppManager.getNewApp(binding);
         if (scalableAppManager.contains(binding.getId())) {
             if (scalableAppManager.get(binding.getId()).getBinding().equals(newApp.getBinding())) {
-                return ResponseEntity.status(HttpStatus.OK).body("{}");
+                return new ResponseEntity(HttpStatus.OK);
             }
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    "{ \"error\" : \"An other binding was found with the same id.\" }");
+            return new ResponseEntity("{ \"error\" : \"An other binding was found with the same id.\" }", HttpStatus.CONFLICT);
         }
 
         if (autoscalerPropertiesBean.isUpdateAppNameAtBinding()) {
@@ -92,14 +89,13 @@ public class BindingController extends BaseController {
 
         ResponseApplication responseApp = ScalableAppService.getSerializationObjectWithLock(newApp);
         scalableAppManager.add(newApp, false);
-        return new ResponseEntity<>(responseApp, HttpStatus.CREATED);
+        return new ResponseEntity(responseApp, HttpStatus.CREATED);
 
     }
 
     /**
      * Handles incoming requests to unbind a existing application.
      *
-     * @param secret {@code String} to authorize with
      * @param appId  ID of the application
      * @return the response in form of a {@code ResponseEntity} with an empty JSON String and a related statuscode
      * @see ResponseEntity
@@ -108,9 +104,9 @@ public class BindingController extends BaseController {
     public ResponseEntity<String> unbindApp(@PathVariable("appId") String appId) {
         if (scalableAppManager.contains(appId)) {
             scalableAppManager.remove(appId);
-            return ResponseEntity.status(HttpStatus.OK).body("{}");
+            return new ResponseEntity(HttpStatus.OK);
         }
-        return ResponseEntity.status(HttpStatus.GONE).body("{}");
+        return new ResponseEntity(HttpStatus.GONE);
 
     }
 
