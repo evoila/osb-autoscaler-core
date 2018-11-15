@@ -47,8 +47,7 @@ public class BindingController extends BaseController {
      * @return the response in form of a {@code ResponseEntity}
      */
     @RequestMapping(value = "/bindings/serviceInstance/{serviceId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> infosAboutSpecificBindings(@RequestHeader(value = "secret") String secret,
-                                                        @PathVariable("serviceId") String serviceId) {
+    public ResponseEntity<?> infosAboutSpecificBindings(@PathVariable("serviceId") String serviceId) {
         List<Binding> bindings = new LinkedList<>();
 
         for (Binding binding : scalableAppManager.getListOfBindings()) {
@@ -72,7 +71,7 @@ public class BindingController extends BaseController {
      * @see ResponseEntity
      */
     @RequestMapping(value = "/bindings", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> bindApp(@RequestHeader(value = "secret") String secret, @RequestBody Binding binding) {
+    public ResponseEntity<?> bindApp(@RequestBody Binding binding) {
 
         if (binding.isValidWithReason() != null) {
             return processErrorResponse(binding.isValidWithReason(), HttpStatus.BAD_REQUEST);
@@ -106,7 +105,7 @@ public class BindingController extends BaseController {
      * @see ResponseEntity
      */
     @RequestMapping(value = "/bindings/{appId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> unbindApp(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId) {
+    public ResponseEntity<String> unbindApp(@PathVariable("appId") String appId) {
         if (scalableAppManager.contains(appId)) {
             scalableAppManager.remove(appId);
             return ResponseEntity.status(HttpStatus.OK).body("{}");
