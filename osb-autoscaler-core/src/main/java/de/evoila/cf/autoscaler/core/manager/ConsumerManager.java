@@ -1,6 +1,6 @@
 package de.evoila.cf.autoscaler.core.manager;
 
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.kafka.consumer.ContainerMetricConsumer;
 import de.evoila.cf.autoscaler.core.kafka.consumer.HttpMetricConsumer;
 import de.evoila.cf.autoscaler.core.kafka.consumer.PredictionConsumer;

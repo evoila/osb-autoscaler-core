@@ -2,10 +2,10 @@ package de.evoila.cf.autoscaler.core.manager;
 
 import de.evoila.cf.autoscaler.api.binding.Binding;
 import de.evoila.cf.autoscaler.api.binding.InvalidBindingException;
-import de.evoila.cf.autoscaler.core.applications.AppBlueprint;
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
-import de.evoila.cf.autoscaler.core.applications.ScalableAppService;
-import de.evoila.cf.autoscaler.core.data.mongodb.AppBlueprintRepository;
+import de.evoila.cf.autoscaler.core.model.AppBlueprint;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableAppService;
+import de.evoila.cf.autoscaler.core.model.repositories.AppBlueprintRepository;
 import de.evoila.cf.autoscaler.core.exception.*;
 import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
 import de.evoila.cf.autoscaler.core.kafka.producer.StringProducer;
@@ -146,7 +146,7 @@ public class ScalableAppManager {
 	public boolean remove(ScalableApp app) {
 		if (contains(app)) {
 			apps.remove(app);
-			appRepository.delete(app.getBinding().getId());
+			appRepository.deleteById(app.getBinding().getId());
 			stringProducer.produceBinding(StringProducer.DELETING, app.getBinding().getId(), app.getBinding().getResourceId(), app.getBinding().getScalerId());
 			log.info("Removed following app from ScalableAppManager: "+app.getIdentifierStringForLogs());
 			return true;
@@ -219,24 +219,24 @@ public class ScalableAppManager {
 	}
 	
 	/**
-	 * Returns the count of managed applications.
-	 * @return count of managed applications.
+	 * Returns the count of managed model.
+	 * @return count of managed model.
 	 */
 	public int size() {
 		return apps.size();
 	}
 	
 	/**
-	 * Creates and returns a new {@linkplain List} with the managed applications as a flat copy.
-	 * @return flat copy of the managed applications as a {@linkplain List}
+	 * Creates and returns a new {@linkplain List} with the managed model as a flat copy.
+	 * @return flat copy of the managed model as a {@linkplain List}
 	 */
 	public List<ScalableApp> getFlatCopyOfApps() {
 		return new LinkedList<ScalableApp>(apps);
 	}
 	
 	/**
-	 * Creates and returns a {@linkplain List} with the identifier Strings of all managed applications.
-	 * @return {@linkplain List} with the identifier Strings of all managed applications.
+	 * Creates and returns a {@linkplain List} with the identifier Strings of all managed model.
+	 * @return {@linkplain List} with the identifier Strings of all managed model.
 	 */
 	public List<String> getListOfIdentifierStrings() {
 		ScalableApp current;
@@ -253,8 +253,8 @@ public class ScalableAppManager {
 	}
 	
 	/**
-	 * Creates and returns a {@linkplain List} with the basic information Strings of all managed applications.
-	 * @return {@linkplain List} with the basic information Strings of all managed applications.
+	 * Creates and returns a {@linkplain List} with the basic information Strings of all managed model.
+	 * @return {@linkplain List} with the basic information Strings of all managed model.
 	 */
 	public List<Binding> getListOfBindings() {
 		ScalableApp current;

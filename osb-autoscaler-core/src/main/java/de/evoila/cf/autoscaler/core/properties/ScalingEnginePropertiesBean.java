@@ -1,7 +1,6 @@
 package de.evoila.cf.autoscaler.core.properties;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * A bean for storing properties dedicated to the Scaling Engine.
@@ -9,46 +8,32 @@ import org.springframework.stereotype.Service;
  * @author Marius Berger
  *
  */
-@Service
+@ConfigurationProperties(prefix = "scaling-engine")
 public class ScalingEnginePropertiesBean {
 
-	/**
-	 * IP or URL of the Scaling Engine
-	 */
-	@Value("${engine.host}")
+    private String scheme;
+
 	private String host;
 	
-	/**
-	 * Port to connect to the Scaling Engine
-	 */
-	@Value("${engine.port}")
 	private int port;
 	
-	/**
-	 * Endpoint to communicate with the Scaling Engine for scaling
-	 */
-	@Value("${engine.endpoint.scaling}")
 	private String scalingEndpoint;
 	
-	/**
-	 * Endpoint to communicate with the Scaling Engine for names
-	 */
-	@Value("${engine.endpoint.name}")
 	private String nameEndpoint;
 	
-	/**
-	 * Secret String to authenticate at the Scaling Engine
-	 */
-	@Value("${engine.secret}")
 	private String secret;
 
-	/**
-	 * Constructor for Spring to inject the bean.
-	 */
 	public ScalingEnginePropertiesBean() { }
 
-	
-	public String getHost() {
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    public String getHost() {
 		return host;
 	}
 

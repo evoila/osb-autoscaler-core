@@ -1,7 +1,7 @@
 package de.evoila.cf.autoscaler.tests.scalingaction;
 
-import de.evoila.cf.autoscaler.core.applications.CpuWrapper;
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.CpuWrapper;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.scaling.ScalingAction;
 import de.evoila.cf.autoscaler.core.scaling.ScalingChecker;
 import de.evoila.cf.autoscaler.tests.TestBase;

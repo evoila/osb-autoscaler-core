@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import de.evoila.cf.autoscaler.core.applications.CpuWrapper;
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.CpuWrapper;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.tests.TestBase;
 
 public class CpuWrapperTest extends TestBase{

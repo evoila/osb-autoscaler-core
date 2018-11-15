@@ -55,7 +55,7 @@ Remember to create a properties file [here](src/main/resources) with following v
 | kafka.http_consumer_groupId | ID of the consumer group the HTTP metric Kafka consumers join |
 | kafka.prediction_consumer_groupId | ID of the consumer group the prediction Kafka consumers join |
 | kafka.container_consumer_count | number of container metric consumer threads to start |
-| kafka.request_consumer_count | number of http metric consumer threads to start |
+| kafka.request_consumer_count | number of controller metric consumer threads to start |
 
 **Scaling Engine Information**
 
@@ -70,12 +70,12 @@ Remember to create a properties file [here](src/main/resources) with following v
 
 | Property | Description |
 | ------ | ------ |
-| spring.data.mongodb.host | IP / URL of the mongodb host |
-| spring.data.mongodb.port | port of the mongodb host |
-| spring.data.mongodb.username | username to use when connecting to mongodb |
-| spring.data.mongodb.password | password to use when connection to mongodb |
-| spring.data.mongodb.database | name of the mongodb database to use |
-| spring.data.mongodb.authentication-database | name of the authentication database |
+| spring.data.repositories.host | IP / URL of the repositories host |
+| spring.data.repositories.port | port of the repositories host |
+| spring.data.repositories.username | username to use when connecting to repositories |
+| spring.data.repositories.password | password to use when connection to repositories |
+| spring.data.repositories.database | name of the repositories database to use |
+| spring.data.repositories.authentication-database | name of the authentication database |
 
 **Default Values**
 

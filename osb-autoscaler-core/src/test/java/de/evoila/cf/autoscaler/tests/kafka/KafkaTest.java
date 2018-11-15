@@ -85,7 +85,7 @@ public class KafkaTest {
 		int requests = (int) (Math.random() * 100);
 		int latency = (int) (Math.random() * 50);
 		String appId = "testAppId";
-		String desc = "This is a test http metric.";
+		String desc = "This is a test controller metric.";
 		
 		try {
 			Thread.sleep(SECONDS_TO_SLEEP * 1000);

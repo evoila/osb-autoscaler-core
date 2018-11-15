@@ -3,9 +3,9 @@ package de.evoila.cf.autoscaler.tests;
 
 import de.evoila.cf.autoscaler.api.binding.Binding;
 import de.evoila.cf.autoscaler.api.binding.BindingContext;
-import de.evoila.cf.autoscaler.core.applications.AppBlueprint;
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
-import de.evoila.cf.autoscaler.core.applications.ScalableAppService;
+import de.evoila.cf.autoscaler.core.model.AppBlueprint;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableAppService;
 import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;

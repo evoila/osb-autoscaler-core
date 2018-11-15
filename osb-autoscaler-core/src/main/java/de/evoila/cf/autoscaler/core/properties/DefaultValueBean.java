@@ -1,7 +1,6 @@
 package de.evoila.cf.autoscaler.core.properties;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * A bean for storing default values.
@@ -9,138 +8,52 @@ import org.springframework.stereotype.Service;
  * @author Marius Berger
  *
  */
-@Service
+@ConfigurationProperties(prefix = "default")
 public class DefaultValueBean {
 
-	/**
-	 * Default option whether scaling is enabled
-	 */
-	@Value("${default.scalingEnabled}")
 	private boolean scalingEnabled;
-	
-	/**
-	 * Default option whether CPU scaling is enabled
-	 */
-	@Value("${default.cpuScalingEnabled}")
+
 	private boolean cpuScalingEnabled;
-	
-	/**
-	 * Default option whether RAM scaling is enabled
-	 */
-	@Value("${default.ramScalingEnabled}")
+
 	private boolean ramScalingEnabled;
-	
-	/**
-	 * Default option whether latency scaling is enabled
-	 */
-	@Value("${default.latencyScalingEnabled}")
+
 	private boolean latencyScalingEnabled;
-	
-	/**
-	 * Default option whether latency scaling is enabled
-	 */
-	@Value("${default.quotientScalingEnabled}")
+
 	private boolean quotientScalingEnabled;
-	
-	/**
-	 * Default option whether prediction scaling is enabled
-	 */
-	@Value("${default.predictionScalingEnabled}")
+
 	private boolean predictionScalingEnabled;
-	
-	/**
-	 * Default value for the scaling interval multiplier
-	 */
-	@Value("${default.scalingIntervalMultiplier}")
+
 	private int scalingIntervalMultiplier;
-		
-	/**
-	 * Default value for the minimum of instances an application is allowed to have.
-	 */
-	@Value("${default.minInstances}")
+
 	private int minInstances;
-	
-	/**
-	 * Default value for the maximum of instances an application is allowed to have
-	 */
-	@Value("${default.maxInstances}")
+
 	private int maxInstances;
-	
-	/**
-	 * Default value for the cool down time.
-	 */
-	@Value("${default.cooldownTime}")
+
 	private int cooldownTime;
-	
-	/**
-	 * Default option whether learning is enabled.
-	 */
-	@Value("${default.learningEnabled}")
+
 	private boolean learningEnabled;
-	
-	/**
-	 * Default option whether billing interval is considered´.
-	 */
-	@Value("${default.billingIntervalConsidered}")
+
 	private boolean billingIntervalConsidered;
-	
-	/**
-	 * Default value for the learning time multiplier.
-	 */
-	@Value("${default.learningTimeMultiplier}")
+
 	private int learningTimeMultiplier;
-	
-	/**
-	 * Default value for threshold policies
-	 */
-	@Value("${default.thresholdPolicy}")
+
 	private String thresholdPolicy;
-	
-	/**
-	 * Default value for the upper limit of CPU
-	 */
-	@Value("${default.cpuUpperLimit}")
+
 	private int cpuUpperLimit;
-	
-	/**
-	 * Default value for the lower limit of CPU
-	 */
-	@Value("${default.cpuLowerLimit}")
+
 	private int cpuLowerLimit;
-	
-	/**
-	 * Default value for the upper limit of RAM
-	 */
-	@Value("${default.ramUpperLimit}")
+
 	private int ramUpperLimit;
-	
-	/**
-	 * Default value for the lower limit of RAM
-	 */
-	@Value("${default.ramLowerLimit}")
+
 	private int ramLowerLimit;
-	
-	/**
-	 * Default value for the upper limit of latency
-	 */
-	@Value("${default.latencyUpperLimit}")
+
 	private int latencyUpperLimit;
-	
-	/**
-	 * Default value for the lower limit of latency
-	 */
-	@Value("${default.latencyLowerLimit}")
+
 	private int latencyLowerLimit;
-	
-	/**
-	 * Default value for the minimum quotient
-	 */
-	@Value("${default.minQuotient}")
+
 	private int minQuotient;
 	
-	/**
-	 * Constructor for Spring to inject the bean.
-	 */
+
 	public DefaultValueBean() { }
 	
 	public boolean isScalingEnabled() {

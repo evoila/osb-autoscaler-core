@@ -1,8 +1,8 @@
 package de.evoila.cf.autoscaler.core.scaling;
 
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
-import de.evoila.cf.autoscaler.core.applications.ScalableAppService;
-import de.evoila.cf.autoscaler.core.http.HTTPWrapper;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableAppService;
+import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
@@ -35,7 +35,7 @@ public class Scaler {
 	private Logger log = LoggerFactory.getLogger(Scaler.class);
 
 	/**
-	 * Manager for {@linkplain ScalableAppManager} to get applications from.
+	 * Manager for {@linkplain ScalableAppManager} to get model from.
 	 */
 	@Autowired
 	private ScalableAppManager appManager;
@@ -50,7 +50,7 @@ public class Scaler {
 	 * Wrapper for HTTP request.
 	 */
 	@Autowired
-	private HTTPWrapper httpWrapper;
+	private AutoscalerScalingEngineService httpWrapper;
 	
 	/**
 	 * Property bean for properties concerning the scaler itself.

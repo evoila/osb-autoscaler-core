@@ -1,18 +1,17 @@
 package de.evoila;
 
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
+import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
+import de.evoila.cf.autoscaler.core.properties.ScalingEnginePropertiesBean;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.util.Assert;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Main class of the project, which starts the Autoscaler.
@@ -21,43 +20,31 @@ import org.springframework.web.filter.CorsFilter;
  */
 @SpringBootApplication
 @EnableMongoRepositories
-@EnableConfigurationProperties({KafkaPropertiesBean.class, AutoscalerPropertiesBean.class})
-public class Application {
-	
-	/**
-	 * The main method to start the {@code ApplicationContext}.
-	 * @param args arguments for the spring application context
-	 */
-	public static void main(String[] args) {
-		
-		ApplicationContext ctx = SpringApplication.run(Application.class, args);
-	    Assert.notNull(ctx); 
-	}
-	
-	@Bean
-    public FilterRegistrationBean corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
+@EnableConfigurationProperties({ KafkaPropertiesBean.class, AutoscalerPropertiesBean.class,
+        ScalingEnginePropertiesBean.class, DefaultValueBean.class })
+public class Application implements WebMvcConfigurer {
 
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
+    static Logger log = LoggerFactory.getLogger(Application.class);
 
-        config.addExposedHeader("WWW-Authenticate");
-        config.addExposedHeader("Access-Control-Allow-Origin");
-        config.addExposedHeader("Access-Control-Allow-Headers");
-
-        config.addAllowedMethod("OPTIONS");
-        config.addAllowedMethod("HEAD");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("PATCH");
-        source.registerCorsConfiguration("/**", config);
-
-        final FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
-        return bean;
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .exposedHeaders("WWW-Authenticate",
+                        "Access-Control-Allow-Origin",
+                        "Access-Control-Allow-Headers"
+                )
+                .allowedMethods("OPTIONS", "HEAD",
+                        "GET", "POST",
+                        "PUT", "PATCH",
+                        "DELETE", "HEAD")
+                .allowCredentials(true);
+    }
+
 }

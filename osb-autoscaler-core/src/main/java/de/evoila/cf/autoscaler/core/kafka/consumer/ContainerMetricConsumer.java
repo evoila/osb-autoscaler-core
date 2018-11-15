@@ -2,7 +2,7 @@ package de.evoila.cf.autoscaler.core.kafka.consumer;
 
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.kafka.AutoScalerConsumer;
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric;

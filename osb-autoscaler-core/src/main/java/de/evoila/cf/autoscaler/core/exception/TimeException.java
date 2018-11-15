@@ -1,6 +1,6 @@
 package de.evoila.cf.autoscaler.core.exception;
 
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
 
 /**
  * Exception to indicate an invalid time stamb or number for a field regarding time.

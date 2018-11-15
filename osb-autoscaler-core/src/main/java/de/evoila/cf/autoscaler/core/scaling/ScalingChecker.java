@@ -1,6 +1,6 @@
 package de.evoila.cf.autoscaler.core.scaling;
 
-import de.evoila.cf.autoscaler.core.applications.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.scaling.prediction.Prediction;
 import de.evoila.cf.autoscaler.kafka.messages.ScalingLog;
