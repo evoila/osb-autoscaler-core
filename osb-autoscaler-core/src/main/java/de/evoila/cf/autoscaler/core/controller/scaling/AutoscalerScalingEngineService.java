@@ -69,7 +69,7 @@ public class AutoscalerScalingEngineService {
 	 * @throws HttpServerErrorException
 	 */
 	public ResponseEntity<String> scale(String resourceId, BindingContext context, int newInstances) throws HttpServerErrorException {
-	    String url = scalingEnginePropertiesBean.getHost() + scalingEnginePropertiesBean.getHost() + "/resources/" + resourceId;
+	    String url = scalingEnginePropertiesBean.getScheme() + scalingEnginePropertiesBean.getHost() + "/resources/" + resourceId;
 		ScalingRequest scalingOrder = new ScalingRequest(newInstances, context);
 		HttpEntity<?> request = new HttpEntity<>(scalingOrder, headers);
 		log.debug("Sending scaling request to " + url + " - " + scalingOrder.toString());
@@ -85,7 +85,7 @@ public class AutoscalerScalingEngineService {
 	 * @throws HttpServerErrorException
 	 */
 	public  ResponseEntity<ApplicationNameRequest> getNameFromScalingEngine(String resourceId, BindingContext context) throws HttpServerErrorException {
-	    String url = scalingEnginePropertiesBean.getHost() + scalingEnginePropertiesBean.getHost() + "/namefromid/" + resourceId;
+	    String url = scalingEnginePropertiesBean.getScheme() + scalingEnginePropertiesBean.getHost() + "/namefromid/" + resourceId;
 		ApplicationNameRequest nameRequest = new ApplicationNameRequest(resourceId, "", context);
 		HttpEntity<?> request = new HttpEntity<>(nameRequest, headers);
 		log.debug("Sending name request to " + url + " - " + nameRequest.toString());
