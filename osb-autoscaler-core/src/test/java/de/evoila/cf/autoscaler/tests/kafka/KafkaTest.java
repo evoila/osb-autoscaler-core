@@ -57,13 +57,16 @@ public class KafkaTest {
 		long ram = (long) (500 * Math.random() * 1024 * 1024);
 		int instanceIndex = (int) (Math.random() * 10);
 		String appId = "testAppId";
+		String appName = "testAppName";
+		String space = "test-space";
+		String orgGuid = "testOrgGuid";
 		String desc = "This is a test container metric.";
 		
 		try {
 			Thread.sleep(SECONDS_TO_SLEEP * 1000);
 		} catch (InterruptedException ex) {}
 		
-		ContainerMetric metric = new ContainerMetric(System.currentTimeMillis(), "testContainerMetric", appId, cpu , ram, instanceIndex, desc);
+		ContainerMetric metric = new ContainerMetric(System.currentTimeMillis(), "testContainerMetric", appId, appName, space, orgGuid, cpu , ram, instanceIndex, desc);
 		producer.produce(metric, TOPIC_CONTAINER);
 		
 		try {
@@ -81,7 +84,7 @@ public class KafkaTest {
 	public void testHTTPMetric() throws InvalidProtocolBufferException {
 		AutoScalerConsumer consumer = new KafkaTestConsumer(TOPIC_HTTP, host, PORT, this);
 		consumer.startConsumer();
-		
+
 		int requests = (int) (Math.random() * 100);
 		int latency = (int) (Math.random() * 50);
 		String appId = "testAppId";

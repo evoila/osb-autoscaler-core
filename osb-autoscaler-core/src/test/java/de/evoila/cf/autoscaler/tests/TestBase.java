@@ -36,7 +36,7 @@ public class TestBase {
 		autoscalerProps = new AutoscalerPropertiesBean();
 		autoscalerProps.setMaxMetricListSize(10000);
 		autoscalerProps.setMaxMetricAge(35 * 1000);
-		producer = new ProtobufProducer();
+		producer = new ProtobufProducer(kafkaProps);
 		AppBlueprint bp;
 		bp = setUpBluePrint();
 		app = new ScalableApp(bp, kafkaProps, autoscalerProps, producer);
@@ -51,7 +51,7 @@ public class TestBase {
 		
 		for (int i = 0; i < metricReader.getMetricCount(); i++) {
 			long now = System.currentTimeMillis();
-			app.addMetric(new ContainerMetric(now, "testContainerMetric", "testId", cpuValues.get(i).getValue(), ramValues.get(i).getValue() * 1024 * 1024, cpuValues.get(i).getInstanceIndex(), ""));
+			app.addMetric(new ContainerMetric(now, "testContainerMetric", "testId", "testName", "test-space", "testOrgGuid", cpuValues.get(i).getValue(), ramValues.get(i).getValue() * 1024 * 1024, cpuValues.get(i).getInstanceIndex(), ""));
 			app.addMetric(new HttpMetric(now, "testHttpMetric", "testId", requestValues[i], latencyValues[i],""));
 			ScalableAppService.aggregateInstanceMetrics(app, null);
 		}

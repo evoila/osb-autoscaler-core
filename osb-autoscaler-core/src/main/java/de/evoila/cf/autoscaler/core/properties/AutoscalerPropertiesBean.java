@@ -1,6 +1,7 @@
 package de.evoila.cf.autoscaler.core.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Service;
 
 /**
  * A bean for storing properties dedicated to the Autoscaler.
@@ -8,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Marius Berger
  *
  */
+@Service
 @ConfigurationProperties(prefix = "scaler")
 public class AutoscalerPropertiesBean {
 
@@ -24,7 +26,7 @@ public class AutoscalerPropertiesBean {
 	/**
 	 * Boolean value, whether to ask the scaling engine for the application name when creating a new binding.
 	 */
-	private boolean getAppNameFromScalingEngineAtBinding;
+	private boolean updateAppNameAtBinding;
 	
 	/**
 	 * Number of instances to add or subtract from the instance count when scaling static.
@@ -52,12 +54,12 @@ public class AutoscalerPropertiesBean {
 		this.maxMetricAge = maxMetricAge;
 	}
 
-	public boolean isGetAppNameFromScalingEngineAtBinding() {
-		return getAppNameFromScalingEngineAtBinding;
+	public boolean isUpdateAppNameAtBinding() {
+		return updateAppNameAtBinding;
 	}
 
-	public void setGetAppNameFromScalingEngineAtBinding(boolean getAppNameFromScalingEngineAtBinding) {
-		this.getAppNameFromScalingEngineAtBinding = getAppNameFromScalingEngineAtBinding;
+	public void setUpdateAppNameAtBinding(boolean updateAppNameAtBinding) {
+		this.updateAppNameAtBinding = updateAppNameAtBinding;
 	}
 
 	public int getStaticScalingSize() {
@@ -65,6 +67,10 @@ public class AutoscalerPropertiesBean {
 	}
 
 	public void setStaticScalingSize(int staticScalingSize) {
-		this.staticScalingSize = staticScalingSize;
+		if (staticScalingSize > 0) {
+			this.staticScalingSize = staticScalingSize;
+		} else {
+			this.staticScalingSize = 1;
+		}
 	}
 }

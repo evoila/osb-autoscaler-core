@@ -87,7 +87,7 @@ public class BindingController extends BaseController {
                     "{ \"error\" : \"An other binding was found with the same id.\" }");
         }
 
-        if (autoscalerPropertiesBean.isGetAppNameFromScalingEngineAtBinding()) {
+        if (autoscalerPropertiesBean.isUpdateAppNameAtBinding()) {
             newApp.getBinding().setResourceName(ScalableAppService.getNameForScalableApp(newApp.getBinding(), autoscalerScalingEngineService));
         }
 

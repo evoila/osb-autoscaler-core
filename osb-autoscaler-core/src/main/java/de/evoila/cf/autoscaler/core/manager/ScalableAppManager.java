@@ -2,16 +2,20 @@ package de.evoila.cf.autoscaler.core.manager;
 
 import de.evoila.cf.autoscaler.api.binding.Binding;
 import de.evoila.cf.autoscaler.api.binding.InvalidBindingException;
+import de.evoila.cf.autoscaler.core.exception.InvalidPolicyException;
+import de.evoila.cf.autoscaler.core.exception.InvalidWorkingSetException;
+import de.evoila.cf.autoscaler.core.exception.LimitException;
+import de.evoila.cf.autoscaler.core.exception.TimeException;
+import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
 import de.evoila.cf.autoscaler.core.model.AppBlueprint;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.model.ScalableAppService;
 import de.evoila.cf.autoscaler.core.model.repositories.AppBlueprintRepository;
-import de.evoila.cf.autoscaler.core.exception.*;
-import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
-import de.evoila.cf.autoscaler.core.kafka.producer.StringProducer;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
+import de.evoila.cf.autoscaler.kafka.model.BindingInformation;
+import de.evoila.cf.autoscaler.kafka.producer.KafkaJsonProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +42,6 @@ public class ScalableAppManager {
 	/**
 	 * Property Bean for Kafka Settings.
 	 */
-	@Autowired
 	private KafkaPropertiesBean kafkaProperties;
 	
 	/**
@@ -66,10 +69,11 @@ public class ScalableAppManager {
 	private ProtobufProducer protobufProducer;
 	
 	/**
-	 * Producer to publish String messages on Kafka.
+	 * Producer to publish JSON messages on Kafka.
+	 * This will be the case when binding or unbinding.
 	 */
 	@Autowired
-	private StringProducer stringProducer;
+	private KafkaJsonProducer jsonProducer;
 	
 	/**
 	 * Internal list of all {@linkplain ScalableApp} objects bound to the Autoscaler.
@@ -79,7 +83,8 @@ public class ScalableAppManager {
 	/**
 	 * Basic constructor for setting up the manager.
 	 */
-	public ScalableAppManager() {
+	public ScalableAppManager(KafkaPropertiesBean kafkaProperties) {
+		this.kafkaProperties = kafkaProperties;
 		apps = new ArrayList<ScalableApp>();
 	}
 
@@ -114,6 +119,7 @@ public class ScalableAppManager {
 							+bp.getBinding().getIdentifierStringForLogs()+" : "+ex.getMessage());
 			}
 		}
+		log.info("Imports from database complete.");
 	}
 	
 	/**
@@ -125,14 +131,15 @@ public class ScalableAppManager {
 	public boolean add(ScalableApp app, boolean loadedFromDatabase) {
 		if (!contains(app)) {
 			apps.add(app);
-			String action = StringProducer.LOADING;
+			String action = BindingInformation.ACTION_LOAD;
 			log.debug("Added following app to ScalableAppManager: "+app.getIdentifierStringForLogs());
 			if (!loadedFromDatabase) {
 				appRepository.save(app.getCopyOfBlueprint());
-				action = StringProducer.CREATING;
+				action = BindingInformation.ACTION_BIND;
 				log.info("Bound following app: "+app.getIdentifierStringForLogs());
 			}
-			stringProducer.produceBinding(action, app.getBinding().getId(), app.getBinding().getResourceId(), app.getBinding().getScalerId());
+			jsonProducer.produceKafkaMessage(kafkaProperties.getBindingTopic(), new BindingInformation(app.getBinding().getResourceId(),
+					action, BindingInformation.SOURCE_AUTOSCALER));
 			return true;
 		}
 		return false;
@@ -147,7 +154,8 @@ public class ScalableAppManager {
 		if (contains(app)) {
 			apps.remove(app);
 			appRepository.deleteById(app.getBinding().getId());
-			stringProducer.produceBinding(StringProducer.DELETING, app.getBinding().getId(), app.getBinding().getResourceId(), app.getBinding().getScalerId());
+			jsonProducer.produceKafkaMessage(kafkaProperties.getBindingTopic(), new BindingInformation(app.getBinding().getResourceId(),
+					BindingInformation.ACTION_UNBIND, BindingInformation.SOURCE_AUTOSCALER));
 			log.info("Removed following app from ScalableAppManager: "+app.getIdentifierStringForLogs());
 			return true;
 		}
@@ -165,12 +173,26 @@ public class ScalableAppManager {
 	
 	/**
 	 * See {@linkplain #contains(ScalableApp)}
-	 * @param bindingId ID of the application to look for
-	 * @return true if the list contains an application with an id equal to the given one 
+	 * @param bindingId ID of the binding to look for
+	 * @return true if the list contains an application with a binding id equal to the given one 
 	 */
 	public boolean contains(String bindingId) {
 		for (int i = 0; i < apps.size(); i++) {
 			if (apps.get(i).getBinding().getId().equals(bindingId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * See {@linkplain #contains(ScalableApp)}
+	 * @param resourceId ID of the resource to look for
+	 * @return true if the list contains an application with a resource id equal to the given one 
+	 */
+	public boolean containsResourceId(String resourceId) {
+		for (int i = 0; i < apps.size(); i++) {
+			if (apps.get(i).getBinding().getResourceId().equals(resourceId)) {
 				return true;
 			}
 		}
@@ -219,24 +241,24 @@ public class ScalableAppManager {
 	}
 	
 	/**
-	 * Returns the count of managed model.
-	 * @return count of managed model.
+	 * Returns the count of managed applications.
+	 * @return count of managed applications.
 	 */
 	public int size() {
 		return apps.size();
 	}
 	
 	/**
-	 * Creates and returns a new {@linkplain List} with the managed model as a flat copy.
-	 * @return flat copy of the managed model as a {@linkplain List}
+	 * Creates and returns a new {@linkplain List} with the managed applications as a flat copy.
+	 * @return flat copy of the managed applications as a {@linkplain List}
 	 */
 	public List<ScalableApp> getFlatCopyOfApps() {
 		return new LinkedList<ScalableApp>(apps);
 	}
 	
 	/**
-	 * Creates and returns a {@linkplain List} with the identifier Strings of all managed model.
-	 * @return {@linkplain List} with the identifier Strings of all managed model.
+	 * Creates and returns a {@linkplain List} with the identifier Strings of all managed applications.
+	 * @return {@linkplain List} with the identifier Strings of all managed applications.
 	 */
 	public List<String> getListOfIdentifierStrings() {
 		ScalableApp current;
@@ -253,8 +275,8 @@ public class ScalableAppManager {
 	}
 	
 	/**
-	 * Creates and returns a {@linkplain List} with the basic information Strings of all managed model.
-	 * @return {@linkplain List} with the basic information Strings of all managed model.
+	 * Creates and returns a {@linkplain List} with the basic information Strings of all managed applications.
+	 * @return {@linkplain List} with the basic information Strings of all managed applications.
 	 */
 	public List<Binding> getListOfBindings() {
 		ScalableApp current;

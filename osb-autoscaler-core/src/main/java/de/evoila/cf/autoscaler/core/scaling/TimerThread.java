@@ -55,7 +55,7 @@ public class TimerThread extends Thread {
 			while (running) {
 				sleep(MIN_INTERVAL);
 				increaseInterval();
-				log.info("Scaling interval "+intervalCount+" ended.");
+				log.info("##### Scaling interval "+intervalCount+" ended. #####");
 				scaler.releaseMutex();
 			}
 		} catch (InterruptedException ex) {}
