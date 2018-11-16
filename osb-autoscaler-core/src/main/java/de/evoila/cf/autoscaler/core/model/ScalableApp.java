@@ -34,14 +34,17 @@ public class ScalableApp {
 	 * Minimum for the {@code cooldownTime}.
 	 */
 	public static final int COOLDOWN_MIN = 0;
+
 	/**
 	 * Minimum for the {@code learningTimeMultiplier}.
 	 */
 	public static final int LEARNING_MULTIPLIER_MIN = 1;
+
 	/**
 	 * Minimum for the  {@code scalingIntervalMultiplier}.
 	 */
 	public static final int SCALING_INTERVAL_MULTIPLIER_MIN = 1;
+
 	/**
 	 * Default for the {@code learningTimeMultiplier}.
 	 */
@@ -51,10 +54,12 @@ public class ScalableApp {
 	 * Code representation for the "maximum" policy.
 	 */
 	public static final String MAX = "max";
+
 	/**
 	 * Code representation for the "minimum" policy.
 	 */
 	public static final String MIN = "min";
+
 	/**
 	 * Code representation for the "mean" policy.
 	 */
@@ -74,14 +79,17 @@ public class ScalableApp {
 	 * Boolean value, whether scaling as a whole is activated.
 	 */
 	private boolean scalingEnabled;
+
 	/**
 	 * Boolean value, whether predictions are considered or ignored.
 	 */
 	private boolean predictionScalingEnabled;
+
 	/**
 	 * Boolean value, whether the learning process is activated.
 	 */
 	private boolean learningEnabled;
+
 	/**
 	 * Boolean value, whether the billing interval consideration is activated.
 	 */
@@ -91,22 +99,27 @@ public class ScalableApp {
 	 * Multiplier for the time between two checks.
 	 */
 	private int scalingIntervalMultiplier;
+
 	/**
 	 * Representation for passed time between the last and the next check.
 	 */
 	private int currentIntervalState;
+
 	/**
 	 * Minimum for the instance count in regards to scaling decisions.
 	 */
 	private int minInstances;
+
 	/**
 	 * Maximum for the instance count in regards to scaling decisions.
 	 */
 	private int maxInstances;
+
 	/**
 	 * Time after a scaling event, where scaling is disabled and metrics will be ignored.
 	 */
 	private int cooldownTime;
+
 	/**
 	 * Multiplier for the time where quotient supported scaling is disabled, but static scaling and learning is conducted.
 	 */
@@ -131,16 +144,19 @@ public class ScalableApp {
 	 * @see CpuWrapper
 	 */
 	private final CpuWrapper cpu;
+
 	/**
 	 * Handles request concerned settings and methods.
 	 * @see RequestWrapper
 	 */
 	private final RequestWrapper request;
+
 	/**
 	 * Handles RAM concerned settings and methods.
 	 * @see RamWrapper
 	 */
 	private final RamWrapper ram;
+
 	/**
 	 * Handles latency concerned settings and methods.
 	 * @see LatencyWrapper
@@ -151,10 +167,12 @@ public class ScalableApp {
 	 * Stores incoming {@code HttpMetrics} before aggregation.
 	 */
 	private List<HttpMetric> httpMetrics;
+
 	/**
 	 * Stores incoming {@code ContainerMetrics} before aggregation.
 	 */
 	private List<ContainerMetric> instanceMetrics;
+
 	/**
 	 * Stores created {@code ApplicationMetrics} for later scaling purposes.
 	 */
@@ -164,12 +182,12 @@ public class ScalableApp {
 	 * Mutex to manage synchronization for the components accessing this {@code ScalableApp}.
 	 */
 	private Semaphore accessMutex;
+
 	/**
 	 * Current prediction for this application.
 	 */
 	private Prediction prediction;
-	
-	
+
 	/**
 	 * Constructor to create a {@code ScalableApp} object with a given {@code AppBlueprint}.
 	 * @param bp {@code AppBlueprint} to get fields from
@@ -214,8 +232,8 @@ public class ScalableApp {
 	 * @param autoscalerProps {@code AutoscalerPropertiesBean} to get general settings
 	 * @param producer {@code ProtobufProducer} to publish on the message broker
 	 */
-	public ScalableApp(Binding binding, KafkaPropertiesBean kafkaProps, DefaultValueBean defaults
-			, AutoscalerPropertiesBean autoscalerProps, ProtobufProducer producer) {
+	public ScalableApp(Binding binding, KafkaPropertiesBean kafkaProps, DefaultValueBean defaults,
+			AutoscalerPropertiesBean autoscalerProps, ProtobufProducer producer) {
 		
 		this.binding = new Binding(binding);
 		if (this.binding.getCreationTime() == 0)
@@ -275,9 +293,9 @@ public class ScalableApp {
 	 * Sets working set fields.
 	 */
 	private void initOtherInternalElements() {
-		httpMetrics = new LinkedList<HttpMetric>();
-		instanceMetrics = new LinkedList<ContainerMetric>();
-		applicationMetrics = new LinkedList<ApplicationMetric>();
+		httpMetrics = new LinkedList<>();
+		instanceMetrics = new LinkedList<>();
+		applicationMetrics = new LinkedList<>();
 		accessMutex = new Semaphore(1);
 		prediction = null;
 	}
@@ -447,7 +465,8 @@ public class ScalableApp {
 	 * @throws InvalidWorkingSetException for an invalid working set
 	 * @throws InvalidBindingException for an invalid binding
 	 */
-	public String update(UpdateRequest updateRequest) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException, InvalidBindingException {
+	public String update(UpdateRequest updateRequest) throws LimitException, InvalidPolicyException, TimeException,
+            InvalidWorkingSetException, InvalidBindingException {
 		AppBlueprint bp = this.getCopyOfBlueprint();
 		Set<Integer> set = updateRequest.getAllSetElements();
 		
@@ -634,21 +653,21 @@ public class ScalableApp {
 	 * Empties the list for {@code ApplicationMetrics}. {@link #applicationMetrics}
 	 */
 	public void resetApplicationMetricLists() {
-		applicationMetrics = new LinkedList<ApplicationMetric>();
+		applicationMetrics = new LinkedList<>();
 	}
 
 	/**
 	 * Empties the list for {@code HttpMetrics}. {@link #httpMetrics}
 	 */
 	public void resetHttpMetricList() {
-		httpMetrics = new LinkedList<HttpMetric>();
+		httpMetrics = new LinkedList<>();
 	}
 	
 	/**
 	 * Empties the list for {@code ContainerMetrics}. {@link #instanceMetrics}
 	 */
 	public void resetContainerMetricsList() {
-		instanceMetrics = new LinkedList<ContainerMetric>();
+		instanceMetrics = new LinkedList<>();
 	}
 	
 	/**
@@ -667,13 +686,13 @@ public class ScalableApp {
 				log.error(ex.getMessage());
 			}
 			
-		} else if( metric.getType() == AutoscalerMetric.TYPE_CONTAINER) {
+		} else if(metric.getType() == AutoscalerMetric.TYPE_CONTAINER) {
 			try {
 				addInstanceContainerMetric(metric.getContainerMetric());
 			} catch (InvalidMetricTypeException ex) {
 				log.error(ex.getMessage());
 			}
-		} else if ( metric.getType() == AutoscalerMetric.TYPE_APPLICATION) {
+		} else if (metric.getType() == AutoscalerMetric.TYPE_APPLICATION) {
 			try {
 				addApplicationMetric(metric.getApplicationMetric());
 			} catch (InvalidMetricTypeException ex) {

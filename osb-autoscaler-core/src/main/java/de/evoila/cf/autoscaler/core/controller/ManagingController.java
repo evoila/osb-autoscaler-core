@@ -10,7 +10,6 @@ import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.model.ScalableAppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,11 +26,15 @@ public class ManagingController extends BaseController {
 
     private static Logger log = LoggerFactory.getLogger(ManagingController.class);
 
-    @Autowired
     private ScalableAppManager scalableAppManager;
 
-    @Autowired
     private AutoscalerScalingEngineService autoscalerScalingEngineService;
+
+    public ManagingController(ScalableAppManager scalableAppManager,
+                             AutoscalerScalingEngineService autoscalerScalingEngineService) {
+        this.scalableAppManager = scalableAppManager;
+        this.autoscalerScalingEngineService = autoscalerScalingEngineService;
+    }
 
     /**
      * Handles incoming request to update an application.

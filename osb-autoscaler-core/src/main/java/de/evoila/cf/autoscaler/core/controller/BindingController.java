@@ -7,7 +7,6 @@ import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.model.ScalableAppService;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,17 +25,19 @@ import java.util.Map;
 @Controller
 public class BindingController extends BaseController {
 
-    /**
-     * {@code ScalableAppManager} to get, bind or unbind model.
-     */
-    @Autowired
+
     private ScalableAppManager scalableAppManager;
 
-    @Autowired
     private AutoscalerPropertiesBean autoscalerPropertiesBean;
 
-    @Autowired
     private AutoscalerScalingEngineService autoscalerScalingEngineService;
+
+    public BindingController(ScalableAppManager scalableAppManager, AutoscalerPropertiesBean autoscalerPropertiesBean,
+                             AutoscalerScalingEngineService autoscalerScalingEngineService) {
+        this.scalableAppManager = scalableAppManager;
+        this.autoscalerPropertiesBean = autoscalerPropertiesBean;
+        this.autoscalerScalingEngineService = autoscalerScalingEngineService;
+    }
 
     /**
      * Handles incoming request to get information about service instance specific existing bindings.
@@ -45,7 +46,7 @@ public class BindingController extends BaseController {
      * @return the response in form of a {@code ResponseEntity}
      */
     @GetMapping(value = "/bindings/serviceInstance/{serviceId}")
-    public ResponseEntity<?> bindings(@PathVariable("serviceId") String serviceId) {
+    public ResponseEntity bindings(@PathVariable("serviceId") String serviceId) {
         List<Binding> bindings = new LinkedList<>();
 
         for (Binding binding : scalableAppManager.getListOfBindings()) {
@@ -57,7 +58,6 @@ public class BindingController extends BaseController {
         Map<String, List<Binding>> map = new HashMap<>();
         map.put("bindings", bindings);
         return new ResponseEntity(map, HttpStatus.OK);
-
     }
 
     /**
@@ -68,7 +68,7 @@ public class BindingController extends BaseController {
      * @see ResponseEntity
      */
     @PostMapping(value = "/bindings")
-    public ResponseEntity<?> bind(@RequestBody Binding binding) {
+    public ResponseEntity bind(@RequestBody Binding binding) {
 
         if (binding.isValidWithReason() != null) {
             return processErrorResponse(binding.isValidWithReason(), HttpStatus.BAD_REQUEST);
@@ -89,7 +89,6 @@ public class BindingController extends BaseController {
         ResponseApplication responseApp = ScalableAppService.getSerializationObjectWithLock(newApp);
         scalableAppManager.add(newApp, false);
         return new ResponseEntity(responseApp, HttpStatus.CREATED);
-
     }
 
     /**
@@ -106,7 +105,6 @@ public class BindingController extends BaseController {
             return new ResponseEntity(HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.GONE);
-
     }
 
 }

@@ -330,8 +330,10 @@ public class ScalableAppService {
 		}
 	}
 	
-	public static String getNameForScalableApp(Binding binding, AutoscalerScalingEngineService wrapper) {
-		ResponseEntity<ApplicationNameRequest> response = wrapper.getNameFromScalingEngine(binding.getResourceId(), binding.getContext());
+	public static String getNameForScalableApp(Binding binding,
+                                               AutoscalerScalingEngineService autoscalerScalingEngineService) {
+		ResponseEntity<ApplicationNameRequest> response = autoscalerScalingEngineService
+                .getNameFromScalingEngine(binding.getResourceId(), binding.getContext());
 		if (response == null) 
 			return "";
 			
@@ -339,7 +341,7 @@ public class ScalableAppService {
 		log.debug("Name request returned with " + response.getStatusCodeValue() + " " + response.getStatusCode().name()
 				+ " - " + response.getBody());
 		
-		if (body.getName()== null)
+		if (body.getName() == null)
 			return "";
 		return body.getName();
 	}
