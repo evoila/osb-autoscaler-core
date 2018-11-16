@@ -4,11 +4,13 @@ import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import de.evoila.cf.autoscaler.core.properties.ScalingEnginePropertiesBean;
+import de.evoila.cf.autoscaler.core.utils.EnvironmentUtils;
 import de.evoila.cf.security.AcceptSelfSignedClientHttpRequestFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +31,9 @@ public class AutoscalerScalingEngineService {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutoscalerScalingEngineService.class);
 	
-	@Autowired
 	private ScalingEnginePropertiesBean scalingEnginePropertiesBean;
+
+	private Environment environment;
 	
 	private RestTemplate restTemplate;
 
@@ -45,7 +48,14 @@ public class AutoscalerScalingEngineService {
 	/**
 	 * Hide constructor because there is no need for an instance of this class.
 	 */
-	public AutoscalerScalingEngineService() {}
+	public AutoscalerScalingEngineService(ScalingEnginePropertiesBean scalingEnginePropertiesBean,
+                                          Environment environment) {
+        this.scalingEnginePropertiesBean = scalingEnginePropertiesBean;
+        this.environment = environment;
+
+        if (EnvironmentUtils.isTestEnvironment(environment))
+            EnvironmentUtils.replaceUrl(scalingEnginePropertiesBean.getEndpoint());
+    }
 	
 	@PostConstruct
 	private void init() {
