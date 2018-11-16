@@ -11,65 +11,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "scaling-engine")
 public class ScalingEnginePropertiesBean {
 
-    private String scheme;
+	private String endpoint;
 
-	private String host;
-	
-	private int port;
-	
-	private String scalingEndpoint;
-	
-	private String nameEndpoint;
-	
 	private String secret;
 
 	public ScalingEnginePropertiesBean() { }
 
-    public String getScheme() {
-        return scheme;
+    public String getEndpoint() {
+        return endpoint;
     }
 
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 
-    public String getHost() {
-		return host;
-	}
+    public String getSecret() {
+        return secret;
+    }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public String getScalingEndpoint() {
-		return scalingEndpoint;
-	}
-
-	public void setScalingEndpoint(String scalingEndpoint) {
-		this.scalingEndpoint = scalingEndpoint;
-	}
-
-	public String getSecret() {
-		return secret;
-	}
-
-	public void setSecret(String secret) {
-		this.secret = secret;
-	}
-
-	public String getNameEndpoint() {
-		return nameEndpoint;
-	}
-
-	public void setNameEndpoint(String nameEndpoint) {
-		this.nameEndpoint = nameEndpoint;
-	}
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 }
