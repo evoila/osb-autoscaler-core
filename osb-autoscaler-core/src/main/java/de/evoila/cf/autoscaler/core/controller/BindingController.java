@@ -1,15 +1,14 @@
 package de.evoila.cf.autoscaler.core.controller;
 
 import de.evoila.cf.autoscaler.api.binding.Binding;
-import de.evoila.cf.autoscaler.core.model.ScalableApp;
-import de.evoila.cf.autoscaler.core.model.ScalableAppService;
 import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableAppService;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +44,8 @@ public class BindingController extends BaseController {
      * @param serviceId {@code String} of the service instance you want to get the bindings of
      * @return the response in form of a {@code ResponseEntity}
      */
-    @RequestMapping(value = "/bindings/serviceInstance/{serviceId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> infosAboutSpecificBindings(@PathVariable("serviceId") String serviceId) {
+    @GetMapping(value = "/bindings/serviceInstance/{serviceId}")
+    public ResponseEntity<?> bindings(@PathVariable("serviceId") String serviceId) {
         List<Binding> bindings = new LinkedList<>();
 
         for (Binding binding : scalableAppManager.getListOfBindings()) {
@@ -68,8 +67,8 @@ public class BindingController extends BaseController {
      * @return the response in form of a {@code ResponseEntity} with a related statuscode and either information about the new application or an other JSON String
      * @see ResponseEntity
      */
-    @RequestMapping(value = "/bindings", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> bindApp(@RequestBody Binding binding) {
+    @PostMapping(value = "/bindings")
+    public ResponseEntity<?> bind(@RequestBody Binding binding) {
 
         if (binding.isValidWithReason() != null) {
             return processErrorResponse(binding.isValidWithReason(), HttpStatus.BAD_REQUEST);
@@ -100,8 +99,8 @@ public class BindingController extends BaseController {
      * @return the response in form of a {@code ResponseEntity} with an empty JSON String and a related statuscode
      * @see ResponseEntity
      */
-    @RequestMapping(value = "/bindings/{appId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> unbindApp(@PathVariable("appId") String appId) {
+    @DeleteMapping(value = "/bindings/{appId}")
+    public ResponseEntity<String> unbind(@PathVariable("appId") String appId) {
         if (scalableAppManager.contains(appId)) {
             scalableAppManager.remove(appId);
             return new ResponseEntity(HttpStatus.OK);
