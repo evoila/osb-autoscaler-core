@@ -54,7 +54,8 @@ public class AutoscalerScalingEngineService {
         this.environment = environment;
 
         if (EnvironmentUtils.isTestEnvironment(environment))
-            EnvironmentUtils.replaceUrl(scalingEnginePropertiesBean.getEndpoint());
+            scalingEnginePropertiesBean.setEndpoint(EnvironmentUtils
+                    .replaceUrl(scalingEnginePropertiesBean.getEndpoint()));
     }
 	
 	@PostConstruct
