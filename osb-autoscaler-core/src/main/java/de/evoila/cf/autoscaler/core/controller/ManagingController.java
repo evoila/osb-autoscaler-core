@@ -2,17 +2,16 @@ package de.evoila.cf.autoscaler.core.controller;
 
 import de.evoila.cf.autoscaler.api.binding.InvalidBindingException;
 import de.evoila.cf.autoscaler.api.update.UpdateRequest;
-import de.evoila.cf.autoscaler.core.model.ScalableApp;
-import de.evoila.cf.autoscaler.core.model.ScalableAppService;
+import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.exception.*;
-import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
+import de.evoila.cf.autoscaler.core.model.ScalableAppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class ManagingController extends BaseController {
 
-    /**
-     * Logger of this class.
-     */
     private static Logger log = LoggerFactory.getLogger(ManagingController.class);
 
-    /**
-     * {@code ScalableAppManager} to get model from.
-     */
     @Autowired
     private ScalableAppManager scalableAppManager;
 
@@ -43,7 +36,6 @@ public class ManagingController extends BaseController {
     /**
      * Handles incoming request to update an application.
      *
-     * @param secret      {@code String} to authorize with
      * @param appId       ID of the application
      * @param requestBody body of the request
      * @return the response in form of a {@code ResponseEntity}
@@ -55,10 +47,9 @@ public class ManagingController extends BaseController {
      * @throws InvalidBindingException
      * @see ResponseEntity
      */
-    @RequestMapping(value = "/manage/{appId}", method = RequestMethod.PATCH
-            , consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateApp(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId,
-                                       @RequestBody UpdateRequest requestBody) throws LimitException, InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException, InvalidBindingException {
+    @PatchMapping(value = "/manage/{appId}")
+    public ResponseEntity patch(@PathVariable("appId") String appId, @RequestBody UpdateRequest requestBody) throws LimitException,
+            InvalidPolicyException, SpecialCharacterException, TimeException, InvalidWorkingSetException, InvalidBindingException {
 
         ScalableApp app = scalableAppManager.get(appId);
 
@@ -88,13 +79,12 @@ public class ManagingController extends BaseController {
     /**
      * Handles incoming request to get information about an application.
      *
-     * @param secret {@code String} to authorize with
      * @param appId  ID of the application
      * @return the response in form of a {@code ResponseEntity}
      * @see ResponseEntity
      */
-    @RequestMapping(value = "/manage/{appId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> appInfo(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId) {
+    @GetMapping(value = "/manage/{appId}")
+    public ResponseEntity get(@PathVariable("appId") String appId) {
 
         ScalableApp app = scalableAppManager.get(appId);
         if (app != null) {
@@ -111,12 +101,11 @@ public class ManagingController extends BaseController {
     /**
      * Handles incoming requests to reset the quotient of an application.
      *
-     * @param secret {@code String} to authorize with
      * @param appId  ID of the application
      * @return the response in form of a {@code ResponseEntity}
      */
-    @RequestMapping(value = "/manage/{appId}/resetQuotient", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> resetQuotient(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId) {
+    @PatchMapping(value = "/manage/{appId}/resetQuotient")
+    public ResponseEntity quotient(@PathVariable("appId") String appId) {
 
         ScalableApp app = scalableAppManager.get(appId);
         if (app != null) {
@@ -139,12 +128,11 @@ public class ManagingController extends BaseController {
     /**
      * Handles incoming requests to reset the learning start time of an application.
      *
-     * @param secret {@code String} to authorize with
      * @param appId  ID of the application
      * @return the response in form of a {@code ResponseEntity}
      */
-    @RequestMapping(value = "/manage/{appId}/resetLST", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> resetLearningStartTime(@RequestHeader(value = "secret") String secret, @PathVariable("appId") String appId) {
+    @PatchMapping(value = "/manage/{appId}/resetLST")
+    public ResponseEntity reset(@PathVariable("appId") String appId) {
         ScalableApp app = scalableAppManager.get(appId);
         if (app != null) {
             ResponseApplication responseApp;
@@ -168,8 +156,8 @@ public class ManagingController extends BaseController {
      *
      * @return the response in form of a {@code ResponseEntity}
      */
-    @RequestMapping(value = "/manage/{bindingId}/updateName", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateResourceName(@PathVariable("bindingId") String bindingId) {
+    @PatchMapping(value = "/manage/{bindingId}/updateName")
+    public ResponseEntity<?> updateName(@PathVariable("bindingId") String bindingId) {
         ScalableApp app = scalableAppManager.get(bindingId);
         if (app != null) {
             ResponseApplication responseApp;
@@ -195,7 +183,8 @@ public class ManagingController extends BaseController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({LimitException.class, InvalidPolicyException.class, SpecialCharacterException.class, TimeException.class, InvalidWorkingSetException.class, InvalidBindingException.class})
+    @ExceptionHandler({LimitException.class, InvalidPolicyException.class, SpecialCharacterException.class, TimeException.class,
+            InvalidWorkingSetException.class, InvalidBindingException.class})
     public ResponseEntity<ErrorMessage> handleInputException(Exception ex) {
         log.warn(ex.getClass().getSimpleName(), ex);
         return processErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
