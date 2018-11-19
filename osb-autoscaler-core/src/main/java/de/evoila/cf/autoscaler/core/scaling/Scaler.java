@@ -1,7 +1,7 @@
 package de.evoila.cf.autoscaler.core.scaling;
 
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
-import de.evoila.cf.autoscaler.core.model.ScalableAppService;
+import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;

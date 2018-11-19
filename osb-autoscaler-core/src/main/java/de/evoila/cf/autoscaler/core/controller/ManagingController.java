@@ -8,7 +8,7 @@ import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineSe
 import de.evoila.cf.autoscaler.core.exception.*;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
-import de.evoila.cf.autoscaler.core.model.ScalableAppService;
+import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

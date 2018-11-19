@@ -30,6 +30,12 @@ import javax.annotation.PostConstruct;
 public class AutoscalerScalingEngineService {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutoscalerScalingEngineService.class);
+
+	private static final String CONTENT_TYPE = "Content-Type";
+
+	private static final String X_AUTH_TOKEN_HEADER = "X-Auth-Token";
+
+	private static final String APPLICATION_JSON = "application/json";
 	
 	private ScalingEnginePropertiesBean scalingEnginePropertiesBean;
 
@@ -37,21 +43,13 @@ public class AutoscalerScalingEngineService {
 	
 	private RestTemplate restTemplate;
 
-    private HttpHeaders headers = new HttpHeaders();
+    private HttpHeaders headers;
 
-    private static final String CONTENT_TYPE = "Content-Type";
-
-    private static final String X_AUTH_TOKEN_HEADER = "X-Auth-Token";
-
-    private static final String APPLICATION_JSON = "application/json";
-	
-	/**
-	 * Hide constructor because there is no need for an instance of this class.
-	 */
 	public AutoscalerScalingEngineService(ScalingEnginePropertiesBean scalingEnginePropertiesBean,
                                           Environment environment) {
         this.scalingEnginePropertiesBean = scalingEnginePropertiesBean;
         this.environment = environment;
+		headers = new HttpHeaders();
 
         if (EnvironmentUtils.isTestEnvironment(environment))
             scalingEnginePropertiesBean.setEndpoint(EnvironmentUtils
@@ -89,13 +87,13 @@ public class AutoscalerScalingEngineService {
 	}
 	
 	/**
-	 * Send a name rquest to the scaling engine
+	 * Send a name request to the scaling engine
 	 * @param resourceId ID of the resource
 	 * @param context {@code BindingContext} of the application
 	 * @return the response in form of a {@code ResponseEntity}
 	 * @throws HttpServerErrorException
 	 */
-	public  ResponseEntity<ApplicationNameRequest> getNameFromScalingEngine(String resourceId, BindingContext context) throws HttpServerErrorException {
+	public ResponseEntity<ApplicationNameRequest> getNameFromScalingEngine(String resourceId, BindingContext context) throws HttpServerErrorException {
 	    String url = scalingEnginePropertiesBean.getEndpoint() + "/namefromid/" + resourceId;
 		ApplicationNameRequest nameRequest = new ApplicationNameRequest(resourceId, "", context);
 		HttpEntity<?> request = new HttpEntity<>(nameRequest, headers);
@@ -106,7 +104,7 @@ public class AutoscalerScalingEngineService {
 			response = restTemplate.postForEntity(url, request, ApplicationNameRequest.class);
 		} catch (RestClientException ex) {
 			log.warn("Exception during a name request for '" + resourceId + "' to scaling engine at '" + url + "'."
-					+ " Maybe the scaling engine could not find an application for the given resourceId"
+					+ " Maybe the scaling engine is not reachable or could not find an application for the given resourceId"
 					+ " or an invalid ApplicationNameRequest was used as the body for the request.");
 		}
 		return response;

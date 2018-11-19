@@ -9,7 +9,7 @@ import de.evoila.cf.autoscaler.core.exception.TimeException;
 import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
 import de.evoila.cf.autoscaler.core.model.AppBlueprint;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
-import de.evoila.cf.autoscaler.core.model.ScalableAppService;
+import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
 import de.evoila.cf.autoscaler.core.model.repositories.AppBlueprintRepository;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
@@ -115,7 +115,7 @@ public class ScalableAppManager {
 				}
 			} catch (LimitException | InvalidPolicyException | TimeException
                     | InvalidWorkingSetException | InvalidBindingException ex) {
-				log.error("Found an invalid AppBlueprint while trying to synch with the database: "
+				log.error("Found an invalid AppBlueprint while trying to synchronize with the database: "
 							+bp.getBinding().getIdentifierStringForLogs()+" : "+ex.getMessage());
 			}
 		}

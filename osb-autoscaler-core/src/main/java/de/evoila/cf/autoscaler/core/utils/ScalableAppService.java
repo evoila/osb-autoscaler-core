@@ -1,4 +1,4 @@
-package de.evoila.cf.autoscaler.core.model;
+package de.evoila.cf.autoscaler.core.utils;
 
 
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
@@ -8,6 +8,8 @@ import de.evoila.cf.autoscaler.core.exception.*;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
 import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
+import de.evoila.cf.autoscaler.core.model.AppBlueprint;
+import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.kafka.messages.ApplicationMetric;
 import de.evoila.cf.autoscaler.kafka.messages.AutoscalerMetric;
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric;

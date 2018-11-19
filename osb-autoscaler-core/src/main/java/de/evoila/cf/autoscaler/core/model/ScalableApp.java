@@ -9,6 +9,7 @@ import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
 import de.evoila.cf.autoscaler.core.scaling.Scaler;
 import de.evoila.cf.autoscaler.core.scaling.prediction.Prediction;
+import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
 import de.evoila.cf.autoscaler.kafka.messages.*;
 import org.slf4j.Logger;
@@ -545,7 +546,7 @@ public class ScalableApp {
 			bp.setScalingIntervalMultiplier(updateRequest.getScaling().getScalingIntervalMultiplier());
 		
 		//check if created blueprint is valid
-		de.evoila.cf.autoscaler.core.model.ScalableAppService.isValid(bp);
+		ScalableAppService.isValid(bp);
 		
 		//update policies based on the blueprint
 		updatePolicies(bp, updateRequest.getSetElements());
