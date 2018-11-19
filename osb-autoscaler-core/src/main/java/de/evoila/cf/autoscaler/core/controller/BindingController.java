@@ -5,7 +5,7 @@ import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
-import de.evoila.cf.autoscaler.core.model.ScalableAppService;
+import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
