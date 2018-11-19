@@ -10,12 +10,10 @@ import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Controller to handle incoming bindings and unbindings.
@@ -37,27 +35,6 @@ public class BindingController extends BaseController {
         this.scalableAppManager = scalableAppManager;
         this.autoscalerPropertiesBean = autoscalerPropertiesBean;
         this.autoscalerScalingEngineService = autoscalerScalingEngineService;
-    }
-
-    /**
-     * Handles incoming request to get information about service instance specific existing bindings.
-     *
-     * @param serviceId {@code String} of the service instance you want to get the bindings of
-     * @return the response in form of a {@code ResponseEntity}
-     */
-    @GetMapping(value = "/bindings/serviceInstance/{serviceId}")
-    public ResponseEntity bindings(@PathVariable("serviceId") String serviceId) {
-        List<Binding> bindings = new LinkedList<>();
-
-        for (Binding binding : scalableAppManager.getListOfBindings()) {
-            if (binding.getServiceId().equals(serviceId)) {
-                bindings.add(binding);
-            }
-        }
-
-        Map<String, List<Binding>> map = new HashMap<>();
-        map.put("bindings", bindings);
-        return new ResponseEntity(map, HttpStatus.OK);
     }
 
     /**

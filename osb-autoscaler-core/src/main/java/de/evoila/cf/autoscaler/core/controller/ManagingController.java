@@ -1,5 +1,6 @@
 package de.evoila.cf.autoscaler.core.controller;
 
+import de.evoila.cf.autoscaler.api.binding.Binding;
 import de.evoila.cf.autoscaler.api.binding.InvalidBindingException;
 import de.evoila.cf.autoscaler.api.update.UpdateRequest;
 import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
@@ -14,6 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller to handle requests to manage existing {@code ScalableApps}.
@@ -34,6 +40,27 @@ public class ManagingController extends BaseController {
                              AutoscalerScalingEngineService autoscalerScalingEngineService) {
         this.scalableAppManager = scalableAppManager;
         this.autoscalerScalingEngineService = autoscalerScalingEngineService;
+    }
+
+    /**
+     * Handles incoming request to get information about service instance specific existing bindings.
+     *
+     * @param serviceId {@code String} of the service instance you want to get the bindings of
+     * @return the response in form of a {@code ResponseEntity}
+     */
+    @GetMapping(value = "/manage/serviceInstance/{serviceId}/bindings")
+    public ResponseEntity bindings(@PathVariable("serviceId") String serviceId) {
+        List<Binding> bindings = new LinkedList<>();
+
+        for (Binding binding : scalableAppManager.getListOfBindings()) {
+            if (binding.getServiceId().equals(serviceId)) {
+                bindings.add(binding);
+            }
+        }
+
+        Map<String, List<Binding>> map = new HashMap<>();
+        map.put("bindings", bindings);
+        return new ResponseEntity(map, HttpStatus.OK);
     }
 
     /**
