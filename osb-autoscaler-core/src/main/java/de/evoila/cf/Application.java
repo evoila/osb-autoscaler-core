@@ -1,4 +1,4 @@
-package de.evoila;
+package de.evoila.cf;
 
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;

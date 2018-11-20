@@ -1,4 +1,4 @@
-package de.evoila;
+package de.evoila.cf;
 
 import de.evoila.cf.security.uaa.UaaRelyingPartyFilter;
 import de.evoila.cf.security.uaa.handler.CommonCorsAuthenticationEntryPoint;
