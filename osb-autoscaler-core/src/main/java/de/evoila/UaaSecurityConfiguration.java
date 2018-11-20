@@ -1,10 +1,10 @@
-package de.evoila.cf.security;
+package de.evoila;
 
-import de.evoila.cf.security.handler.CommonCorsAuthenticationEntryPoint;
-import de.evoila.cf.security.handler.UaaRelyingPartyAuthenticationFailureHandler;
-import de.evoila.cf.security.handler.UaaRelyingPartyAuthenticationSuccessHandler;
-import de.evoila.cf.security.provider.UaaRelyingPartyAuthenticationProvider;
 import de.evoila.cf.security.uaa.UaaRelyingPartyFilter;
+import de.evoila.cf.security.uaa.handler.CommonCorsAuthenticationEntryPoint;
+import de.evoila.cf.security.uaa.handler.UaaRelyingPartyAuthenticationFailureHandler;
+import de.evoila.cf.security.uaa.handler.UaaRelyingPartyAuthenticationSuccessHandler;
+import de.evoila.cf.security.uaa.provider.UaaRelyingPartyAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

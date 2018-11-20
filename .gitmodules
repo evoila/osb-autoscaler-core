@@ -4,3 +4,6 @@
 [submodule "osb-autoscaler-api"]
 	path = osb-autoscaler-api
 	url = git@github.com:evoila/osb-autoscaler-api.git
+[submodule "osb-core"]
+	path = osb-core
+	url = https://github.com/evoila/osb-core

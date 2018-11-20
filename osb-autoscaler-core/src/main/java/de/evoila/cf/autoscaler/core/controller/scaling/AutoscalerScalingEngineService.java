@@ -5,7 +5,7 @@ import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import de.evoila.cf.autoscaler.core.properties.ScalingEnginePropertiesBean;
 import de.evoila.cf.autoscaler.core.utils.EnvironmentUtils;
-import de.evoila.cf.security.AcceptSelfSignedClientHttpRequestFactory;
+import de.evoila.cf.security.utils.AcceptSelfSignedClientHttpRequestFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
