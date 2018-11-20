@@ -16,6 +16,7 @@
 	</parent>
 
 	<modules>
+        <module>osb-core</module>
         <module>osb-autoscaler-messaging</module>
         <module>osb-autoscaler-api</module>
         <module>osb-autoscaler-core</module>
