@@ -114,18 +114,19 @@ Every call to the Core needs a secret header with the prearranged secret for aut
 
 | Endpoint | Body Class | Description |
 | ------ | ------ | ------ |
-| GET /bindings | - | get information about all bindings |
 | POST /bindings | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de.evoila.cf.autoscaler.core/api/binding/Binding.java) | bind a new application |
 | GET /bindings/{bindingId} | - | get information about a specific binding |
 | DELETE /bindings/{bindingId} | - | delete a binding |
-| PATCH /bindings/{bindingId} | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de.evoila.cf.autoscaler.core/api/update/UpdateRequest.java) | update the policies of a binding |
-| PATCH /bindings/{bindingId}/resetQuotient | - | reset the quotient of a binding to its minimum quotient
-| PATCH /bindings/{bindingId}/resetLST | - | reset the learning start time and therefore enabling a new learning process, if learning is enabled |
-| PATCH /bindings/{bindingId}/updateName | - |request the descriptive name of the resource on the platform and updates the current value (only used for easy visual identification of bindings) |
+| GET /manage/serviceInstance/{serviceId}/bindings | - | Returns all Bindings to a give Service Instance
+| PATCH /manage/{appId} | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de.evoila.cf.autoscaler.core/api/update/UpdateRequest.java) | update the policies of a binding |
+| GET /manage/{appId} | - | Get the policies of an AppId |
+| PATCH /manage/{appId}/resetQuotient | - | reset the quotient of a binding to its minimum quotient
+| PATCH /manage/{appId}/resetLST | - | reset the learning start time and therefore enabling a new learning process, if learning is enabled |
+| PATCH /manage/{appId}/updateName | - |request the descriptive name of the resource on the platform and updates the current value (only used for easy visual identification of bindings) |
 
 For example bodies and responses see [detailed API](detailedApi.md).
 
 
 
 ## Version ##
-v1.3
+v1.2

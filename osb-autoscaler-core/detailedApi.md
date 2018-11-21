@@ -4,56 +4,6 @@
 
 Receive a list of all current bindings with basic information about every single one.
 
-### Request ###
-
-```GET /bindings```
-
-Example body:
-```
-No body needed / possible.
-```
-
-### Response ###
-
-| Code | Description |
-| ----- | ----- |
-| 200 OK | successful request with a list of bindings with basic information |
-| 401 UNAUTHORIZED | unauthorized request, might be caused by wrong secret string. |
-
-
-Example body for 200:
-```json
-{
-    "bindings": [
-        {
-            "id": "exampleBinding",
-            "resourceId": "1234567890",
-            "resourceName": "exampleBindingName",
-            "scalerId": "0",
-            "serviceId": "1",
-            "creationTime": 1511429355735,
-            "context": {
-                "platform": "cloudfoundry",
-                "space_guid": "example_space",
-                "organization_guid": "example_org"
-            }
-        },
-        {
-            "id": "anotherExampleBinding",
-            "resourceId": "0987654321",
-            "resourceName": "anotherExampleBindingName",
-            "scalerId": "0",
-            "serviceId": "0",
-            "creationTime": 1511952821309,
-            "context": {
-                "platform": "cloudfoundry",
-                "space_guid": "example_space",
-                "organization_guid": "example_org"
-            }
-        }
-    ]
-}
-```
 ## Create a new binding ##
 
 Creates a new binding based on the given parameters and the default values of the Core.
@@ -153,7 +103,7 @@ Gathers all available information about a binding.
 
 ### Request ###
 
-```GET /bindings/{bindingId}```
+```GET /manage/{appId}```
 
 Example body:
 ```
@@ -179,7 +129,7 @@ Deletes a binding matching the given ID from the Core.
 
 ### Request ###
 
-```DELETE /bindings/{bindingId}```
+```DELETE /manage/{appId}```
 
 Example body:
 ```json
@@ -207,7 +157,7 @@ Updates the policies of a binding with the given parameters. Updating some of th
 
 ### Request ###
 
-```PATCH /bindings/{bindingId}```
+```PATCH /manage/{appId}```
 
 Example body:
 ```json
@@ -271,7 +221,7 @@ Resets the quotient of a binding to its minimum quotient.
 
 ### Request ###
 
-```PATCH /bindings/{bindingId}/resetQuotient```
+```PATCH /manage/{appId}/resetQuotient```
 
 Example body:
 ```json
@@ -297,7 +247,7 @@ Resets the learning start time of a binding to enable a new learning process.
 
 ### Request ###
 
-```PATCH /bindings/{bindingId}/resetLST```
+```PATCH /manage/{appId}/resetLST```
 
 Example body:
 ```json
@@ -323,7 +273,7 @@ Requests the descriptive resource name the platform has for the resource behind 
 
 ### Request ###
 
-```PATCH /bindings/{bindingId}/updateName```
+```PATCH /manage/{appId}/updateName```
 
 Example body:
 ```json

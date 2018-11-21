@@ -253,7 +253,7 @@ public class ScalableAppManager {
 	 * @return flat copy of the managed applications as a {@linkplain List}
 	 */
 	public List<ScalableApp> getFlatCopyOfApps() {
-		return new LinkedList<ScalableApp>(apps);
+		return new LinkedList<>(apps);
 	}
 	
 	/**

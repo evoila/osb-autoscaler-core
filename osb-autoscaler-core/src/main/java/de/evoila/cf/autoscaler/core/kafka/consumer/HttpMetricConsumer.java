@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Consumer implementing the {@code AutoScalerConsumer} interface, parsing byte to controller protobuf from a {@code ByteConsumerThread}
+ * A Consumer implementing the {@code AutoScalerConsumer} interface, parsing byte to http protobuf from a {@code ByteConsumerThread}
  * and adding the resulting {@code HttpMetric} to the dedicated {@code ScalableApp}.
  * @see AutoScalerConsumer
  * @author Marius Berger
