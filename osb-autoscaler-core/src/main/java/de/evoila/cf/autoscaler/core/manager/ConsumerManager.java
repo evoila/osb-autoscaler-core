@@ -88,7 +88,7 @@ public class ConsumerManager {
 				, containerConsumerGroupId, kafkaProps.getHost(), kafkaProps.getPort(), scalerProperties.getMaxMetricAge(), appManager);
 		containerConsumers.add(newConsumer);
 		newConsumer.startConsumer();
-		log.info("New container consumer #"+containerConsumers.size()+" started.");
+		log.info("New container consumer #"+containerConsumers.size()+" started on topic "+kafkaProps.getMetricContainerTopic());
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class ConsumerManager {
 				, httpConsumerGroupId, kafkaProps.getHost(), kafkaProps.getPort(), scalerProperties.getMaxMetricAge(), appManager);
 		requestConsumers.add(newConsumer);
 		newConsumer.startConsumer();
-		log.info("New request consumer #"+requestConsumers.size()+" started.");
+		log.info("New request consumer #"+requestConsumers.size()+" started on topic "+kafkaProps.getMetricHttpTopic());
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class ConsumerManager {
 		predictionConsumer = new PredictionConsumer(kafkaProps.getPredicTopic(), predictionConsumerGroupId
 				, kafkaProps.getHost(), kafkaProps.getPort(), appManager);
 		predictionConsumer.startConsumer();
-		log.info("New prediction consumer started.");
+		log.info("New prediction consumer started on topic "+kafkaProps.getPredicTopic());
 	}
 	
 	/**
