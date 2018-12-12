@@ -107,7 +107,7 @@ public class Scaler {
 				for (int i = 0; i < l.size(); i++) {
 					currentApp = l.get(i);
 					currentApp.acquire();
-					log.debug("--- Application " + currentApp.getIdentifierStringForLogs() + " --- ");
+					log.info("--- Application " + currentApp.getIdentifierStringForLogs() + " --- ");
 					if (currentApp.isScalingEnabled()) {
 						ScalableAppService.aggregateInstanceMetrics(currentApp, producer);
 						boolean timeToCheck = currentApp.timeToCheck();
@@ -122,7 +122,7 @@ public class Scaler {
 						}
 					} else {
 						log.debug("InstanceMetrics: count=" + currentApp.getCopyOfInstanceContainerMetricsList().size() + " - " + currentApp.getCopyOfInstanceContainerMetricsList());
-						log.debug("No scaling enabled for " + currentApp.getIdentifierStringForLogs());
+						log.info("No scaling enabled for " + currentApp.getIdentifierStringForLogs());
 						currentApp.resetContainerMetricsList();
 						currentApp.resetHttpMetricList();
 					}
