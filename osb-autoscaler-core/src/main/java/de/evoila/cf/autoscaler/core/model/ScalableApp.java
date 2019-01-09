@@ -670,43 +670,13 @@ public class ScalableApp {
 	public void resetContainerMetricsList() {
 		instanceMetrics = new LinkedList<>();
 	}
-	
-	/**
-	 * Adds a {@code Metric} to the related list.
-	 * @param metric {@code Metric} to add
-	 */
-	public void addMetric(AutoscalerMetric metric) {
-		if (metric == null) {
-			return;
-		}
-		
-		if (metric.getType() == AutoscalerMetric.TYPE_HTTP) {
-			try {
-				addHttpMetric(metric.getHttpMetric());
-			} catch (InvalidMetricTypeException ex) {
-				log.error(ex.getMessage());
-			}
-			
-		} else if(metric.getType() == AutoscalerMetric.TYPE_CONTAINER) {
-			try {
-				addInstanceContainerMetric(metric.getContainerMetric());
-			} catch (InvalidMetricTypeException ex) {
-				log.error(ex.getMessage());
-			}
-		} else if (metric.getType() == AutoscalerMetric.TYPE_APPLICATION) {
-			try {
-				addApplicationMetric(metric.getApplicationMetric());
-			} catch (InvalidMetricTypeException ex) {
-					log.error(ex.getMessage());
-			}
-		}
-	}
-	
+
 	/**
 	 * Adds a {@code HttpMetric} to the {@link #httpMetrics} and deletes latest {@code HttpMetric}, if {@link #maxListSize} is surpassed.
 	 * @param metric {@code HttpMetric} to add
 	 */
-	private void addHttpMetric(HttpMetric metric) {
+	public void addMetric(HttpMetric metric) {
+		if (metric == null) return;
 		httpMetrics.add(metric);
 		while (httpMetrics.size() > maxListSize) {
 			httpMetrics.remove(0);
@@ -717,7 +687,8 @@ public class ScalableApp {
 	 * Adds a {@code ContainerMetric} to the {@link #instanceMetrics} and deletes latest {@code ContainerMetric}, if {@link #maxListSize} is surpassed.
 	 * @param metric {@code ContainerMetric} to add
 	 */
-	private void addInstanceContainerMetric(ContainerMetric metric) {
+	public void addMetric(ContainerMetric metric) {
+		if (metric == null) return;
 		instanceMetrics.add(metric);
 		while (instanceMetrics.size() > maxListSize) {
 			instanceMetrics.remove(0);
@@ -728,7 +699,8 @@ public class ScalableApp {
 	 * Adds a {@code ApplicationMetric} to the {@link #instanceMetrics} and deletes latest {@code ApplicationMetric}, if {@link #maxListSize} is surpassed.
 	 * @param metric {@code ApplicationMetric} to add
 	 */
-	private void addApplicationMetric(ApplicationMetric metric) {
+	public void addMetric(ApplicationMetric metric) {
+		if (metric == null) return;
 		if (!isInCooldown()) {
 			applicationMetrics.add(metric);
 			while (applicationMetrics.size() > maxListSize) {

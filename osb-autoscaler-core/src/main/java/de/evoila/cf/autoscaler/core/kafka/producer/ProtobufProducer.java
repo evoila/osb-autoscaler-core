@@ -3,10 +3,13 @@ package de.evoila.cf.autoscaler.core.kafka.producer;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.scaling.ScalingAction;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
+import de.evoila.cf.autoscaler.kafka.messages.ApplicationMetric;
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric;
+import de.evoila.cf.autoscaler.kafka.messages.HttpMetric;
 import de.evoila.cf.autoscaler.kafka.messages.ScalingLog;
 import de.evoila.cf.autoscaler.kafka.protobuf.PbApplicationMetric;
 import de.evoila.cf.autoscaler.kafka.protobuf.PbContainerMetric;
+import de.evoila.cf.autoscaler.kafka.protobuf.PbHttpMetric;
 import de.evoila.cf.autoscaler.kafka.protobuf.PbScalingLog;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -47,8 +50,17 @@ public class ProtobufProducer {
 	 */
 	private String scalingTopic;
 	/**
+	 * Topic to publish {@linkplain ApplicationMetric} on.
 	 */
 	private String applicationMetricsTopic;
+	/**
+	 * Topic to publish {@linkplain HttpMetric} on.
+	 */
+	private String httpMetricTopic;
+	/**
+	 * Topic to publish {@linkplain ContainerMetric} on.
+	 */
+	private String containerMetricTopic;
 	/**
 	 * Id of the group to join.
 	 */
@@ -72,6 +84,8 @@ public class ProtobufProducer {
 		host = kafkaProps.getHost() + ":" + kafkaProps.getPort();
 		scalingTopic = kafkaProps.getScalingTopic();
 		applicationMetricsTopic = kafkaProps.getMetricApplicationTopic();
+		containerMetricTopic = kafkaProps.getMetricContainerTopic();
+		httpMetricTopic = kafkaProps.getMetricHttpTopic();
 		groupId = kafkaProps.getProducerGroupId();
 
         Properties configProperties = new Properties();
@@ -127,6 +141,27 @@ public class ProtobufProducer {
 	}
 
 	/**
+	 * Publish a {@linkplain HttpMetric} on Kafka on the given topic.
+	 * @param metric {@linkplain HttpMetric} to publish
+	 * @param topic topic to publish on
+	 */
+	public void produceHttpMetric(HttpMetric metric) {
+		PbHttpMetric.ProtoHttpMetric metricProto = PbHttpMetric.ProtoHttpMetric.newBuilder()
+				.setTimestamp(metric.getTimestamp())
+				.setMetricName(metric.getMetricName())
+				.setAppId(metric.getAppId())
+				.setRequests(metric.getRequests())
+				.setLatency(metric.getLatency())
+				.setDescription(metric.getDescription())
+				.build();
+
+		byte[] output = metricProto.toByteArray();
+
+		ProducerRecord<String, byte[]> rec = new ProducerRecord<>(httpMetricTopic, output);
+		producer.send(rec);
+	}
+
+	/**
 	 * Publish a {@linkplain ContainerMetric} on Kafka.
 	 * @param containerMetric {@linkplain ContainerMetric} to publish
 	 */
@@ -143,18 +178,42 @@ public class ProtobufProducer {
 		
 		byte[] output = metricProto.toByteArray();
 		
-        ProducerRecord<String, byte[]> rec = new ProducerRecord<String, byte[]>(applicationMetricsTopic, output);
+        ProducerRecord<String, byte[]> rec = new ProducerRecord<String, byte[]>(containerMetricTopic, output);
         producer.send(rec);
 	}
 	
 	/**
-	 * Publish a {@linkplain PbApplicationMetric} on Kafka.
+	 * Publish a {@linkplain PbApplicationMetric} directly on Kafka.
 	 * @param applicationMetric protobuf application metric to produce
 	 */
 	public void produceApplicationMetric(PbApplicationMetric.ProtoApplicationMetric applicationMetric) {
 		byte[] output = applicationMetric.toByteArray();
 		
 		ProducerRecord<String, byte[]> rec = new ProducerRecord<>(applicationMetricsTopic, output);
+		producer.send(rec);
+	}
+
+	/**
+	 * Publish a {@linkplain ApplicationMetric} on Kafka.
+	 * @param applicationMetric {@linkplain ApplicationMetric} to publish}
+	 */
+	public void produceApplicationMetric(ApplicationMetric applicationMetric) {
+		PbApplicationMetric.ProtoApplicationMetric metricProto = PbApplicationMetric.ProtoApplicationMetric.newBuilder()
+				.setTimestamp(applicationMetric.getTimestamp())
+				.setMetricName(applicationMetric.getMetricName())
+				.setAppId(applicationMetric.getAppId())
+				.setCpu(applicationMetric.getCpu())
+				.setRam(applicationMetric.getRam())
+				.setRequests(applicationMetric.getRequests())
+				.setLatency(applicationMetric.getLatency())
+				.setQuotient(applicationMetric.getQuotient())
+				.setInstanceCount(applicationMetric.getInstanceCount())
+				.setDescription(applicationMetric.getDescription())
+				.build();
+
+		byte[] output = metricProto.toByteArray();
+
+		ProducerRecord<String, byte[]> rec = new ProducerRecord<String, byte[]>(applicationMetricsTopic, output);
 		producer.send(rec);
 	}
 }
