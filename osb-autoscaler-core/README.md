@@ -15,10 +15,6 @@ This project uses Apache Maven as build management tool. You should download the
 ## Installation ##
 Download this repository, edit the config file according to your setup and build it via Apache Maven. To start the `osb-autoscaler-core` run the created .jar file, there are no parameters needed.
 
-You can run the `KafkaTest.java` unit test to test the connection with your Apache Kafka instance.
-
-*NOTE*: At the moment you might have to run the test twice before completing it successfully, when starting it for the very first time.
-
 ## Configuration ##
 
 Remember to create a properties file [here](src/main/resources) with following valid properties. You can use the example file to get an idea of how it could look like.
