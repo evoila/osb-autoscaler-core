@@ -2,8 +2,6 @@ package de.evoila.cf.autoscaler.core.kafka.producer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.evoila.cf.autoscaler.core.model.ScalableApp;
-import de.evoila.cf.autoscaler.core.scaling.ScalingAction;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
 import de.evoila.cf.autoscaler.kafka.messages.ApplicationMetric;
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric;
@@ -87,34 +85,9 @@ public class POJOProducer {
 
 	/**
 	 * Publish a {@linkplain ScalingLog} on Kafka.
-	 * @param sc {@linkplain ScalingAction} to get fields from
-	 * @param timestamp time stamp for the {@linkplain ScalingLog}
+	 * @param scalingLog {@linkplain ScalingLog} to publish
 	 */
-	public void produceScalingLog(ScalingAction sc, long timestamp) {
-		ScalableApp app = sc.getApp();
-
-		ScalingLog scalingLog = new ScalingLog(
-				timestamp,
-				app.getBinding().getResourceId(),
-				app.getBinding().getResourceName(),
-				sc.getReason(),
-				sc.getOldInstances(),
-				sc.getNewInstances(),
-				app.getMaxInstances(),
-				app.getMinInstances(),
-				app.getCpu().getValueOfCpu(),
-				app.getCpu().getUpperLimit(),
-				app.getCpu().getLowerLimit(),
-				app.getRam().getValueOfRam(),
-				app.getRam().getUpperLimit(),
-				app.getRam().getLowerLimit(),
-				app.getRequest().getValueOfHttpRequests(),
-				app.getLatency().getValueOfLatency(),
-				app.getLatency().getUpperLimit(),
-				app.getLatency().getLowerLimit(),
-				app.getRequest().getQuotient(),
-				sc.getReasonDescription()
-		);
+	public void produceScalingLog(ScalingLog scalingLog) {
 		log.debug("ScalingLog: " + scalingLog.toString());
 		produce(kafkaProps.getScalingTopic(), scalingLog);
 	}

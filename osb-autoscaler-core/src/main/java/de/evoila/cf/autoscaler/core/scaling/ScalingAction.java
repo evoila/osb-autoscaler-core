@@ -45,13 +45,14 @@ public class ScalingAction {
 	 */
 	private boolean needToScale;
 	/**
-	 * Description of the reseason, which will not be used for computation.
+	 * Description of the reason, which will not be used for computation.
 	 */
 	private String reasonDescription;
 
 	/**
+	 * Executes this action and sends a scaling request to the Scaling Engine.
+     * Also tries to publish a {@linkplain ScalingLog} on Kafka.
 	 *
-     *
 	 * @param producer Producer to publish on the message broker
 	 */
 	public void executeAction(AutoscalerScalingEngineService httpWrapper, POJOProducer producer) {
@@ -74,8 +75,31 @@ public class ScalingAction {
 					log.error("Scaling request returned with " + response.getStatusCodeValue() + " " + response.getStatusCode().name()
 							+ " - " + response.getBody());
 				}
+
+				ScalingLog scalingLog = new ScalingLog(
+						scalingTime,
+						app.getBinding().getResourceId(),
+						app.getBinding().getResourceName(),
+						getReason(),
+						getOldInstances(),
+						getNewInstances(),
+						app.getMaxInstances(),
+						app.getMinInstances(),
+						app.getCpu().getValueOfCpu(),
+						app.getCpu().getUpperLimit(),
+						app.getCpu().getLowerLimit(),
+						app.getRam().getValueOfRam(),
+						app.getRam().getUpperLimit(),
+						app.getRam().getLowerLimit(),
+						app.getRequest().getValueOfHttpRequests(),
+						app.getLatency().getValueOfLatency(),
+						app.getLatency().getUpperLimit(),
+						app.getLatency().getLowerLimit(),
+						app.getRequest().getQuotient(),
+						getReasonDescription()
+				);
 				
-				producer.produceScalingLog(this, scalingTime);
+				producer.produceScalingLog(scalingLog);
 			} catch (HttpServerErrorException ex) {
 				log.error("Scaling request threw HttpServerErrorException with " + ex.getRawStatusCode() + " " + ex.getStatusText()
 						+ " - " + ex.getResponseBodyAsString());
