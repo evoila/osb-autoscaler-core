@@ -2,7 +2,7 @@ package de.evoila.cf.autoscaler.core.scaling;
 
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
-import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
+import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.kafka.messages.ScalingLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class ScalingAction {
      *
 	 * @param producer Producer to publish on the message broker
 	 */
-	public void executeAction(AutoscalerScalingEngineService httpWrapper, ProtobufProducer producer) {
+	public void executeAction(AutoscalerScalingEngineService httpWrapper, POJOProducer producer) {
 		if (needToScale && isValid()) {
 			long scalingTime = System.currentTimeMillis();
 			app.setLastScalingTime(scalingTime);

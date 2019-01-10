@@ -1,13 +1,14 @@
 package de.evoila.cf.autoscaler.core.kafka.consumer;
 
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.kafka.AutoScalerConsumer;
 import de.evoila.cf.autoscaler.kafka.messages.HttpMetric;
-import de.evoila.cf.autoscaler.kafka.protobuf.PbHttpMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * A Consumer implementing the {@code AutoScalerConsumer} interface, parsing byte to http protobuf from a {@code ByteConsumerThread}
@@ -22,6 +23,11 @@ public class HttpMetricConsumer extends AbstractByteConsumer{
 	 * Logger of the class.
 	 */
 	private Logger log = LoggerFactory.getLogger(HttpMetricConsumer.class);
+
+	/**
+	 * Jackson object mapper to create POJOs from the byte messages from kafka.
+	 */
+	private ObjectMapper objectMapper;
 	
 	/**
 	 * Constructor with all necessary fields.
@@ -34,15 +40,16 @@ public class HttpMetricConsumer extends AbstractByteConsumer{
 	 */
 	public HttpMetricConsumer(String topic, String groupId, String hostname, int port, long maxMetricAge, ScalableAppManager appManager) {
 		super(topic, groupId, hostname, port, maxMetricAge, appManager);
+		objectMapper = new ObjectMapper();
 	}
 	
 	/**
-	 * Consume byte, parse it into {@linkplain PbHttpMetric} and add them to the dedicated {@linkplain ScalableApp}.
+	 * Consume byte, parse it into {@linkplain HttpMetric} and add them to the dedicated {@linkplain ScalableApp}.
 	 * @see ScalableApp
 	 */
 	public void consume(byte[] bytes) {
 		try {
-			HttpMetric metric = new HttpMetric(PbHttpMetric.ProtoHttpMetric.parseFrom(bytes));
+			HttpMetric metric = objectMapper.readValue(bytes, HttpMetric.class);
 			ScalableApp app = appManager.getByResourceId(metric.getAppId());
 			
 			if (app != null && !metric.isTooOld(maxMetricAge)) {
@@ -52,7 +59,7 @@ public class HttpMetricConsumer extends AbstractByteConsumer{
 				} catch (InterruptedException ex) {}
 				app.release();
 			}
-		} catch (InvalidProtocolBufferException e) {
+		} catch (IOException e) {
 			log.error("Could not parse metric: "+e.getMessage());
 		}
 	}

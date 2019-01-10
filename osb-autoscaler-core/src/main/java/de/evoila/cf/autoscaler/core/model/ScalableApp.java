@@ -4,7 +4,7 @@ import de.evoila.cf.autoscaler.api.binding.Binding;
 import de.evoila.cf.autoscaler.api.binding.InvalidBindingException;
 import de.evoila.cf.autoscaler.api.update.UpdateRequest;
 import de.evoila.cf.autoscaler.core.exception.*;
-import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
+import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
 import de.evoila.cf.autoscaler.core.scaling.Scaler;
@@ -196,7 +196,7 @@ public class ScalableApp {
 	 * @param autoscalerProps {@code AutoscalerPropertiesBean} to get general settings from
 	 * @param producer {@code ProtobufProducer} to publish on the message broker
 	 */
-	public ScalableApp(AppBlueprint bp, KafkaPropertiesBean kafkaProps, AutoscalerPropertiesBean autoscalerProps, ProtobufProducer producer) {
+	public ScalableApp(AppBlueprint bp, KafkaPropertiesBean kafkaProps, AutoscalerPropertiesBean autoscalerProps, POJOProducer producer) {
 		binding = bp.getBinding();
 		
 		scalingEnabled = bp.isScalingEnabled();
@@ -234,7 +234,7 @@ public class ScalableApp {
 	 * @param producer {@code ProtobufProducer} to publish on the message broker
 	 */
 	public ScalableApp(Binding binding, KafkaPropertiesBean kafkaProps, DefaultValueBean defaults,
-			AutoscalerPropertiesBean autoscalerProps, ProtobufProducer producer) {
+			AutoscalerPropertiesBean autoscalerProps, POJOProducer producer) {
 		
 		this.binding = new Binding(binding);
 		if (this.binding.getCreationTime() == 0)

@@ -3,7 +3,6 @@ package de.evoila.cf.autoscaler.core.scaling.prediction;
 import de.evoila.cf.autoscaler.core.exception.LimitException;
 import de.evoila.cf.autoscaler.core.exception.SpecialCharacterException;
 import de.evoila.cf.autoscaler.core.exception.TimeException;
-import de.evoila.cf.autoscaler.kafka.protobuf.PbPrediction;
 
 /**
  * Entity for handling a prediction.
@@ -52,11 +51,6 @@ public class Prediction {
 		this.predictorId = predictorId;
 		this.appId = appId;
 		this.desc = desc;
-	}
-	
-	public Prediction(PbPrediction.ProtoPrediction proto) {
-		this(proto.getInstanceCount(), proto.getTimestamp(), proto.getIntervalStart(), proto.getIntervalEnd(), 
-				proto.getPredictorId(), proto.getAppId(), proto.getDescription());
 	}
 	
 	public int getInstanceCount() {

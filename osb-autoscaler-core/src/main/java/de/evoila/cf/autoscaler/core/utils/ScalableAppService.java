@@ -7,14 +7,13 @@ import de.evoila.cf.autoscaler.api.binding.InvalidBindingException;
 import de.evoila.cf.autoscaler.core.exception.*;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
-import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
+import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.core.model.AppBlueprint;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.kafka.messages.ApplicationMetric;
 import de.evoila.cf.autoscaler.kafka.messages.AutoscalerMetric;
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric;
 import de.evoila.cf.autoscaler.kafka.messages.HttpMetric;
-import de.evoila.cf.autoscaler.kafka.protobuf.PbApplicationMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -244,7 +243,7 @@ public class ScalableAppService {
 	 * @param app {@linkplain ScalableApp} to its metrics
 	 * @param protoProducer {@code ProtobufProducer} to use to publish the message
 	 */
-	public static void aggregateInstanceMetrics(ScalableApp app, ProtobufProducer protoProducer) {
+	public static void aggregateInstanceMetrics(ScalableApp app, POJOProducer protoProducer) {
 		
 		List<ContainerMetric> containerMetrics = app.getCopyOfInstanceContainerMetricsList();
 		List<HttpMetric> httpMetrics = app.getCopyOfHttpMetricsList();
@@ -310,25 +309,27 @@ public class ScalableAppService {
 		app.resetHttpMetricList();
 		
 		if (cpuCounter > 0 && ramCounter > 0) {
-            PbApplicationMetric.ProtoApplicationMetric applicationMetric = PbApplicationMetric.ProtoApplicationMetric.newBuilder()
-					.setTimestamp(timestamp)
-					.setMetricName(metricName)
-					.setAppId(app.getBinding().getResourceId())
-					.setCpu(cpu)
-					.setRam(ram)
-					.setRequests(requests)
-					.setLatency(latency)
-					.setQuotient(quotient)
-					.setInstanceCount(instanceCount)
-					.setDescription(description)
-					.build();
-			
-			ApplicationMetric appMetric = new ApplicationMetric(applicationMetric);
-			if (protoProducer != null)
-				protoProducer.produceApplicationMetric(applicationMetric);
-			app.addMetric(appMetric);
-			log.debug("New ApplicationMetric: " + appMetric);
+			ApplicationMetric applicationMetric = new ApplicationMetric(
+					cpu,
+					ram,
+					instanceCount,
+					requests,
+					latency,
+					quotient,
+					timestamp,
+					app.getBinding().getResourceId(),
+					metricName,
+					description
+			);
+
+			app.addMetric(applicationMetric);
+			log.debug("New ApplicationMetric: " + applicationMetric);
 			log.debug("ApplicationMetrics: "+ app.getCopyOfApplicationMetricsList());
+			if (protoProducer != null) {
+				protoProducer.produceApplicationMetric(applicationMetric);
+			} else {
+				log.error("Failed to produce application metric, because the given producer object is null.");
+			}
 		}
 	}
 	

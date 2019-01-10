@@ -1,6 +1,6 @@
 package de.evoila.cf.autoscaler.core.kafka.consumer;
 
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.exception.LimitException;
 import de.evoila.cf.autoscaler.core.exception.SpecialCharacterException;
@@ -8,9 +8,10 @@ import de.evoila.cf.autoscaler.core.exception.TimeException;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.core.scaling.prediction.Prediction;
 import de.evoila.cf.autoscaler.kafka.AutoScalerConsumer;
-import de.evoila.cf.autoscaler.kafka.protobuf.PbPrediction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * A Consumer implementing the {@code AutoScalerConsumer} interface, parsing byte to prediction protobuf from a {@code ByteConsumerThread} 
@@ -26,7 +27,12 @@ public class PredictionConsumer extends AbstractByteConsumer{
 	 * Logger of the class.
 	 */
 	private Logger log = LoggerFactory.getLogger(PredictionConsumer.class);
-	
+
+	/**
+	 * Jackson object mapper to create POJOs from the byte messages from kafka.
+	 */
+	private ObjectMapper objectMapper;
+
 	/**
 	 * Constructor with all necessary fields.
 	 * @param topic topic for the {@linkplain #consThread ByteConsumerThread} to subscribe to.
@@ -37,6 +43,7 @@ public class PredictionConsumer extends AbstractByteConsumer{
 	 */
 	public PredictionConsumer(String topic, String groupId, String hostname, int port, ScalableAppManager appManager) {
 		super(topic, groupId, hostname,port, -1, appManager);
+		objectMapper = new ObjectMapper();
 	}
 	
 	/**
@@ -47,7 +54,7 @@ public class PredictionConsumer extends AbstractByteConsumer{
 	@Override
 	public void consume(byte[] bytes) {
 		try {
-			Prediction prediction = new Prediction(PbPrediction.ProtoPrediction.parseFrom(bytes));
+			Prediction prediction = objectMapper.readValue(bytes, Prediction.class);
 			ScalableApp app = appManager.getByResourceId(prediction.getAppId());
 
 			if (app != null) {
@@ -71,7 +78,7 @@ public class PredictionConsumer extends AbstractByteConsumer{
 				} catch (InterruptedException e) {}
 				app.release();
 			}
-		} catch (InvalidProtocolBufferException e) {
+		} catch (IOException e) {
 			log.error("Could not parse prediction: " + e.getMessage());
 		}
 	}

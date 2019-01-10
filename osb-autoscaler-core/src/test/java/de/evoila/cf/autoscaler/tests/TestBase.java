@@ -6,7 +6,7 @@ import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import de.evoila.cf.autoscaler.core.model.AppBlueprint;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
-import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
+import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
 import de.evoila.cf.autoscaler.core.scaling.ScalingAction;
@@ -27,7 +27,7 @@ public class TestBase {
 	static KafkaPropertiesBean kafkaProps;
 	static DefaultValueBean defaults;
 	static AutoscalerPropertiesBean autoscalerProps;
-	static ProtobufProducer producer;
+	static POJOProducer producer;
 	
 	@BeforeClass
 	public static void setUp() {
@@ -36,7 +36,7 @@ public class TestBase {
 		autoscalerProps = new AutoscalerPropertiesBean();
 		autoscalerProps.setMaxMetricListSize(10000);
 		autoscalerProps.setMaxMetricAge(35 * 1000);
-		producer = new ProtobufProducer(kafkaProps);
+		producer = new POJOProducer(kafkaProps);
 		AppBlueprint bp;
 		bp = setUpBluePrint();
 		app = new ScalableApp(bp, kafkaProps, autoscalerProps, producer);

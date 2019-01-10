@@ -6,7 +6,7 @@ import de.evoila.cf.autoscaler.core.exception.InvalidPolicyException;
 import de.evoila.cf.autoscaler.core.exception.InvalidWorkingSetException;
 import de.evoila.cf.autoscaler.core.exception.LimitException;
 import de.evoila.cf.autoscaler.core.exception.TimeException;
-import de.evoila.cf.autoscaler.core.kafka.producer.ProtobufProducer;
+import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.core.model.AppBlueprint;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
@@ -15,7 +15,6 @@ import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
 import de.evoila.cf.autoscaler.kafka.model.BindingInformation;
-import de.evoila.cf.autoscaler.kafka.producer.KafkaJsonProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,33 +46,22 @@ public class ScalableAppManager {
 	/**
 	 * Property Bean for default values.
 	 */
-	@Autowired
 	private DefaultValueBean defaults;
 	
 	/**
 	 * Properties for settings for the Autoscaler.
 	 */
-	@Autowired
 	private AutoscalerPropertiesBean autoscalerProperties;
 	
 	/**
 	 * Repository for connection to the database.
 	 */
-	@Autowired
 	private AppBlueprintRepository appRepository;
 	
 	/**
 	 * Producer to publish protobuf messages on Kafka.
 	 */
-	@Autowired
-	private ProtobufProducer protobufProducer;
-	
-	/**
-	 * Producer to publish JSON messages on Kafka.
-	 * This will be the case when binding or unbinding.
-	 */
-	@Autowired
-	private KafkaJsonProducer jsonProducer;
+	private POJOProducer pojoProducer;
 	
 	/**
 	 * Internal list of all {@linkplain ScalableApp} objects bound to the Autoscaler.
@@ -81,11 +69,16 @@ public class ScalableAppManager {
 	private List<ScalableApp> apps;
 	
 	/**
-	 * Basic constructor for setting up the manager.
+	 * Constructor for Spring to inject this service.
 	 */
-	public ScalableAppManager(KafkaPropertiesBean kafkaProperties) {
+	public ScalableAppManager(KafkaPropertiesBean kafkaProperties, DefaultValueBean defaults, AutoscalerPropertiesBean autoscalerProperties, AppBlueprintRepository appRepository, POJOProducer pojoProducer) {
 		this.kafkaProperties = kafkaProperties;
-		apps = new ArrayList<ScalableApp>();
+		this.defaults = defaults;
+		this.autoscalerProperties = autoscalerProperties;
+		this.appRepository = appRepository;
+		this.pojoProducer = pojoProducer;
+
+		apps = new ArrayList<>();
 	}
 
 	/**
@@ -103,7 +96,7 @@ public class ScalableAppManager {
 		
 			try {
 				if (ScalableAppService.isValid(bp)) {
-					ScalableApp app = new ScalableApp(bp, kafkaProperties, autoscalerProperties, protobufProducer);
+					ScalableApp app = new ScalableApp(bp, kafkaProperties, autoscalerProperties, pojoProducer);
 					if (!contains(app)) {
 						add(app,true);
 						log.info("Imported app from database: "+app.getIdentifierStringForLogs());
@@ -138,7 +131,7 @@ public class ScalableAppManager {
 				action = BindingInformation.ACTION_BIND;
 				log.info("Bound following app: "+app.getIdentifierStringForLogs());
 			}
-			jsonProducer.produceKafkaMessage(kafkaProperties.getBindingTopic(), new BindingInformation(app.getBinding().getResourceId(),
+			pojoProducer.produceBindingInformation(new BindingInformation(app.getBinding().getResourceId(),
 					action, BindingInformation.SOURCE_AUTOSCALER));
 			return true;
 		}
@@ -154,7 +147,7 @@ public class ScalableAppManager {
 		if (contains(app)) {
 			apps.remove(app);
 			appRepository.deleteById(app.getBinding().getId());
-			jsonProducer.produceKafkaMessage(kafkaProperties.getBindingTopic(), new BindingInformation(app.getBinding().getResourceId(),
+			pojoProducer.produceBindingInformation(new BindingInformation(app.getBinding().getResourceId(),
 					BindingInformation.ACTION_UNBIND, BindingInformation.SOURCE_AUTOSCALER));
 			log.info("Removed following app from ScalableAppManager: "+app.getIdentifierStringForLogs());
 			return true;
@@ -237,7 +230,7 @@ public class ScalableAppManager {
 	 * @return the new {@linkplain ScalableApp}
 	 */
 	public ScalableApp getNewApp(Binding binding) {
-		return new ScalableApp(binding, kafkaProperties, defaults, autoscalerProperties, protobufProducer);
+		return new ScalableApp(binding, kafkaProperties, defaults, autoscalerProperties, pojoProducer);
 	}
 	
 	/**

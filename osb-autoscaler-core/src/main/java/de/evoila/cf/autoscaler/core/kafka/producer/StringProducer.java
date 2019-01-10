@@ -34,7 +34,7 @@ public class StringProducer {
 	private org.apache.kafka.clients.producer.Producer<String,String> producer;
 	
 	/** 
-	 * Default constructor for Spring to inject this service.
+	 * Constructor for Spring to inject this service.
 	 */
 	public StringProducer(KafkaPropertiesBean kafkaProps) {this.kafkaProps = kafkaProps; }
 	
