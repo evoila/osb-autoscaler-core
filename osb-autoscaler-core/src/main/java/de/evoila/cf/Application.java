@@ -20,8 +20,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @SpringBootApplication
 @EnableMongoRepositories
-@EnableConfigurationProperties({ KafkaPropertiesBean.class, AutoscalerPropertiesBean.class,
-        ScalingEnginePropertiesBean.class, DefaultValueBean.class })
 public class Application implements WebMvcConfigurer {
 
     static Logger log = LoggerFactory.getLogger(Application.class);

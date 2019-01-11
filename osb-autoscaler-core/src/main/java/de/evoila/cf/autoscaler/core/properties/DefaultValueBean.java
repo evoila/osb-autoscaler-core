@@ -1,6 +1,7 @@
 package de.evoila.cf.autoscaler.core.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * A bean for storing default values.
@@ -8,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Marius Berger
  *
  */
+@Configuration
 @ConfigurationProperties(prefix = "default")
 public class DefaultValueBean {
 
