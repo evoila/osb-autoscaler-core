@@ -3,9 +3,9 @@ package de.evoila.cf.autoscaler.core.scaling;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
-import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.core.manager.ScalableAppManager;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
+import de.evoila.cf.autoscaler.kafka.producer.KafkaJsonProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class Scaler {
 	 * Producer service to publish on the message broker.
 	 */
 	@Autowired
-	private POJOProducer producer;
+	private KafkaJsonProducer producer;
 	
 	/**
 	 * Wrapper for HTTP request.

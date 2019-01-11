@@ -2,8 +2,8 @@ package de.evoila.cf.autoscaler.core.scaling;
 
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
-import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.kafka.messages.ScalingLog;
+import de.evoila.cf.autoscaler.kafka.producer.KafkaJsonProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +55,7 @@ public class ScalingAction {
 	 *
 	 * @param producer Producer to publish on the message broker
 	 */
-	public void executeAction(AutoscalerScalingEngineService httpWrapper, POJOProducer producer) {
+	public void executeAction(AutoscalerScalingEngineService httpWrapper, KafkaJsonProducer producer) {
 		if (needToScale && isValid()) {
 			long scalingTime = System.currentTimeMillis();
 			app.setLastScalingTime(scalingTime);
@@ -98,7 +98,8 @@ public class ScalingAction {
 						app.getRequest().getQuotient(),
 						getReasonDescription()
 				);
-				
+
+				log.debug("ScalingLog: " + scalingLog.toString());
 				producer.produceScalingLog(scalingLog);
 			} catch (HttpServerErrorException ex) {
 				log.error("Scaling request threw HttpServerErrorException with " + ex.getRawStatusCode() + " " + ex.getStatusText()

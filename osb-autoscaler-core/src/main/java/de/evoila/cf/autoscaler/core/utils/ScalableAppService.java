@@ -7,13 +7,13 @@ import de.evoila.cf.autoscaler.api.binding.InvalidBindingException;
 import de.evoila.cf.autoscaler.core.exception.*;
 import de.evoila.cf.autoscaler.core.controller.scaling.AutoscalerScalingEngineService;
 import de.evoila.cf.autoscaler.core.controller.response.ResponseApplication;
-import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.core.model.AppBlueprint;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.kafka.messages.ApplicationMetric;
 import de.evoila.cf.autoscaler.kafka.messages.AutoscalerMetric;
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric;
 import de.evoila.cf.autoscaler.kafka.messages.HttpMetric;
+import de.evoila.cf.autoscaler.kafka.producer.KafkaJsonProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -243,7 +243,7 @@ public class ScalableAppService {
 	 * @param app {@linkplain ScalableApp} to its metrics
 	 * @param protoProducer {@code ProtobufProducer} to use to publish the message
 	 */
-	public static void aggregateInstanceMetrics(ScalableApp app, POJOProducer protoProducer) {
+	public static void aggregateInstanceMetrics(ScalableApp app, KafkaJsonProducer jsonProducer) {
 		
 		List<ContainerMetric> containerMetrics = app.getCopyOfInstanceContainerMetricsList();
 		List<HttpMetric> httpMetrics = app.getCopyOfHttpMetricsList();
@@ -325,8 +325,8 @@ public class ScalableAppService {
 			app.addMetric(applicationMetric);
 			log.debug("New ApplicationMetric: " + applicationMetric);
 			log.debug("ApplicationMetrics: "+ app.getCopyOfApplicationMetricsList());
-			if (protoProducer != null) {
-				protoProducer.produceApplicationMetric(applicationMetric);
+			if (jsonProducer != null) {
+				jsonProducer.produceApplicationMetric(applicationMetric);
 			} else {
 				log.error("Failed to produce application metric, because the given producer object is null.");
 			}

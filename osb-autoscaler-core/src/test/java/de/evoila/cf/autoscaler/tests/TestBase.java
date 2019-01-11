@@ -6,13 +6,13 @@ import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import de.evoila.cf.autoscaler.core.model.AppBlueprint;
 import de.evoila.cf.autoscaler.core.model.ScalableApp;
 import de.evoila.cf.autoscaler.core.utils.ScalableAppService;
-import de.evoila.cf.autoscaler.core.kafka.producer.POJOProducer;
 import de.evoila.cf.autoscaler.core.properties.AutoscalerPropertiesBean;
 import de.evoila.cf.autoscaler.core.properties.DefaultValueBean;
 import de.evoila.cf.autoscaler.core.scaling.ScalingAction;
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean;
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric;
 import de.evoila.cf.autoscaler.kafka.messages.HttpMetric;
+import de.evoila.cf.autoscaler.kafka.producer.KafkaJsonProducer;
 import org.junit.BeforeClass;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class TestBase {
 	static KafkaPropertiesBean kafkaProps;
 	static DefaultValueBean defaults;
 	static AutoscalerPropertiesBean autoscalerProps;
-	static POJOProducer producer;
+	static KafkaJsonProducer producer;
 	
 	@BeforeClass
 	public static void setUp() {
@@ -36,10 +36,10 @@ public class TestBase {
 		autoscalerProps = new AutoscalerPropertiesBean();
 		autoscalerProps.setMaxMetricListSize(10000);
 		autoscalerProps.setMaxMetricAge(35 * 1000);
-		producer = new POJOProducer(kafkaProps);
+		producer = new KafkaJsonProducer(kafkaProps);
 		AppBlueprint bp;
 		bp = setUpBluePrint();
-		app = new ScalableApp(bp, kafkaProps, autoscalerProps, producer);
+		app = new ScalableApp(bp, kafkaProps, autoscalerProps);
 		
 		metricReader = new MetricReader();
 		metricReader.readFromFile(MetricReader.PATH);
