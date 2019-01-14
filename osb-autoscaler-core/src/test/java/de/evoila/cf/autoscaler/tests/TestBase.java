@@ -27,8 +27,7 @@ public class TestBase {
 	static KafkaPropertiesBean kafkaProps;
 	static DefaultValueBean defaults;
 	static AutoscalerPropertiesBean autoscalerProps;
-	static KafkaJsonProducer producer;
-	
+
 	@BeforeClass
 	public static void setUp() {
 		kafkaProps = new KafkaPropertiesBean();
@@ -36,7 +35,6 @@ public class TestBase {
 		autoscalerProps = new AutoscalerPropertiesBean();
 		autoscalerProps.setMaxMetricListSize(10000);
 		autoscalerProps.setMaxMetricAge(35 * 1000);
-		producer = new KafkaJsonProducer(kafkaProps);
 		AppBlueprint bp;
 		bp = setUpBluePrint();
 		app = new ScalableApp(bp, kafkaProps, autoscalerProps);
