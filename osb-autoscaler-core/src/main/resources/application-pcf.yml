@@ -5,8 +5,3 @@ spring:
   data:
     mongodb:
       host: "${MONGODB_HOST}"
-
-### Logging ###
-logging:
-  level:
-    root: INFO
